@@ -1,7 +1,8 @@
 import React from 'react';
 import Post from './Post/Post';
-import { Grid, CircularProgress } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { Grid, CircularProgress, Typography } from '@material-ui/core';
+import { useQuery } from 'react-query';
+import { fetchPosts } from '../../api';
 import useStyles from './styles';
 
 interface Props {
@@ -9,24 +10,37 @@ interface Props {
 }
 
 const Posts = ({ setCurrentId }: Props) => {
-	const posts = useSelector((state: any) => state.posts);
 	const classes = useStyles();
+	const { data, status } = useQuery('all_posts', fetchPosts);
 
-	return !posts.length ? (
-		<CircularProgress />
-	) : (
-		<Grid
-			className={classes.mainContainer}
-			container
-			alignItems="stretch"
-			spacing={3}>
-			{posts.map((post: any) => (
-				<Grid key={post._id} item xs={12} sm={6}>
-					<Post post={post} setCurrentId={setCurrentId} />
-				</Grid>
-			))}
-		</Grid>
-	);
+	if (status === 'loading' || data === undefined) return <CircularProgress />;
+	else if (status === 'error') {
+		return (
+			<Typography variant="h5" align="center" color="error">
+				Error fetching data
+			</Typography>
+		);
+	} else if (status === 'success' && data?.length === 0) {
+		return (
+			<Typography variant="h5" align="center" style={{ color: 'white' }}>
+				No memories added yet!
+			</Typography>
+		);
+	} else {
+		return (
+			<Grid
+				className={classes.mainContainer}
+				container
+				alignItems="stretch"
+				spacing={3}>
+				{data.map((post) => (
+					<Grid key={post._id} item xs={12} sm={6}>
+						<Post post={post} setCurrentId={setCurrentId} />
+					</Grid>
+				))}
+			</Grid>
+		);
+	}
 };
 
 export default Posts;

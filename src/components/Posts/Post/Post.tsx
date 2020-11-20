@@ -14,9 +14,10 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import useStyles from './styles';
 import { deletePost, likePost } from '../../../actions/posts';
+import PostModel from '../../../models/postModel';
 
 interface Props {
-	post: any;
+	post: PostModel;
 	setCurrentId(id: string): void;
 }
 
