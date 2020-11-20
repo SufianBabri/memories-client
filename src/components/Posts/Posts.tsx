@@ -3,6 +3,7 @@ import Post from './Post/Post';
 import { Grid, CircularProgress, Typography } from '@material-ui/core';
 import { useQuery } from 'react-query';
 import { fetchPosts } from '../../api';
+import { ALL_POSTS } from '../../constants/apiPredicates';
 import useStyles from './styles';
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 
 const Posts = ({ setCurrentId }: Props) => {
 	const classes = useStyles();
-	const { data, status } = useQuery('all_posts', fetchPosts);
+	const { data, status } = useQuery(ALL_POSTS, fetchPosts);
 
 	if (status === 'loading' || data === undefined) return <CircularProgress />;
 	else if (status === 'error') {

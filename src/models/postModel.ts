@@ -6,5 +6,5 @@ export default interface PostModel {
 	selectedFile: string;
 	creator: string;
 	createdAt: string;
-	likeCount: string;
+	likeCount: number;
 }

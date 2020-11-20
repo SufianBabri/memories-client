@@ -11,13 +11,18 @@ export async function fetchPosts() {
 	return data;
 }
 
-export async function createPost2(newPost: PostDto) {
-	const { data } = await axios.post<PostModel[]>(endpoint, newPost);
+export async function createPost(newPost: PostDto) {
+	const { data } = await axios.post<PostModel>(endpoint, newPost);
 	return data;
 }
 
-export const createPost = (newPost: any) => axios.post(endpoint, newPost);
-export const updatePost = (id: string, updatedPost: any) =>
-	axios.patch(`${endpoint}/${id}`, updatedPost);
+export async function updatePost(id: string, updatedPost: PostDto) {
+	const { data } = await axios.patch<PostModel>(
+		`${endpoint}/${id}`,
+		updatedPost
+	);
+	return data;
+}
+
 export const deletePost = (id: string) => axios.delete(`${endpoint}/${id}`);
 export const likePost = (id: string) => axios.patch(`${endpoint}/${id}/like`);
