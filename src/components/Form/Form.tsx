@@ -1,34 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { queryCache, useMutation } from 'react-query';
 import { TextField, Button, Typography, Paper } from '@material-ui/core';
 //@ts-ignore
 import FileBase from 'react-file-base64';
 import useStyles from './styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { createPost, updatePost } from '../../actions/posts';
+import * as api from '../../api';
+import { ALL_POSTS } from '../../constants/apiPredicates';
+import PostDto from '../../dto/postDto';
+import PostModel from '../../models/postModel';
 
 interface Prop {
 	currentId: string | null;
 	setCurrentId(id: string | null): void;
 }
 
-interface PostData {
-	creator: string;
-	title: string;
-	message: string;
-	tags: string[];
-	selectedFile: string;
-}
-
 const Form = ({ currentId, setCurrentId }: Prop) => {
-	const post = useSelector((state: any) =>
-		currentId ? state.posts.find((p: any) => p._id === currentId) : null
-	);
+	const post = queryCache
+		.getQueryData<PostModel[]>(ALL_POSTS)
+		?.find((p) => p._id === currentId);
 
 	useEffect(() => {
 		if (post) setPostData(post);
 	}, [post]);
 
-	const [postData, setPostData] = useState<PostData>({
+	const [postData, setPostData] = useState<PostDto>({
 		creator: '',
 		title: '',
 		message: '',
@@ -36,18 +31,56 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		selectedFile: '',
 	});
 	const classes = useStyles();
-	const dispatch = useDispatch();
+
+	const [createPost] = useMutation(() => api.createPost(postData), {
+		onSuccess: (newPost) => {
+			queryCache.cancelQueries(ALL_POSTS);
+
+			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
+				if (current === undefined) return [newPost];
+				return [...current, newPost];
+			});
+
+			queryCache.refetchQueries(ALL_POSTS);
+		},
+		onError: (e) => console.error(e),
+		onSettled: () => {
+			clear();
+			queryCache.refetchQueries(ALL_POSTS);
+		},
+	});
+	const [updatePost] = useMutation(
+		(id: string) => api.updatePost(id, postData),
+		{
+			onSuccess: (newPost) => {
+				queryCache.cancelQueries(ALL_POSTS);
+
+				queryCache.setQueryData<PostModel[]>(ALL_POSTS, (posts) => {
+					if (posts === undefined) return [newPost];
+					posts.map((p) => {
+						if (p._id === currentId) return newPost;
+						else return p;
+					});
+					return posts;
+				});
+				queryCache.refetchQueries(ALL_POSTS);
+			},
+			onError: (e) => console.error(e),
+			onSettled: () => {
+				clear();
+				queryCache.refetchQueries(ALL_POSTS);
+			},
+		}
+	);
 
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
 
 		if (currentId) {
-			dispatch(updatePost(currentId, postData));
+			updatePost(currentId);
 		} else {
-			dispatch(createPost(postData));
+			createPost();
 		}
-
-		clear();
 	};
 	const clear = () => {
 		setCurrentId(null);
