@@ -13,8 +13,11 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import useStyles from './styles';
-import { deletePost, likePost } from '../../../actions/posts';
+import * as api from '../../../api';
+import { likePost } from '../../../actions/posts';
 import PostModel from '../../../models/postModel';
+import { queryCache, useMutation } from 'react-query';
+import { ALL_POSTS } from '../../../constants/apiPredicates';
 
 interface Props {
 	post: PostModel;
@@ -24,6 +27,17 @@ interface Props {
 const Post = ({ post, setCurrentId }: Props) => {
 	const dispatch = useDispatch();
 	const classes = useStyles();
+
+	const [deletePost] = useMutation((id: string) => api.deletePost2(id), {
+		onSuccess: () => {
+			queryCache.cancelQueries(ALL_POSTS);
+
+			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
+				if (current === undefined) return [];
+				return current.filter((p) => p._id !== post._id);
+			});
+		},
+	});
 	return (
 		<Card className={classes.card}>
 			<CardMedia
@@ -72,7 +86,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 				<Button
 					size="small"
 					color="primary"
-					onClick={() => dispatch(deletePost(post._id))}>
+					onClick={() => deletePost(post._id)}>
 					<DeleteIcon fontSize="small" />
 					&nbsp; Delete
 				</Button>

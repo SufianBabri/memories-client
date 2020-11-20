@@ -1,16 +1,6 @@
 import * as api from '../api';
 import { CREATE, UPDATE, FETCH_ALL, DELETE } from '../constants/actionTypes';
 
-export const deletePost = (id: string) => async (dispatch: any) => {
-	try {
-		await api.deletePost(id);
-
-		dispatch({ type: DELETE, payload: id });
-	} catch (error) {
-		console.log(error);
-	}
-};
-
 export const likePost = (id: string) => async (dispatch: any) => {
 	try {
 		const { data } = await api.likePost(id);
