@@ -14,7 +14,6 @@ import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import useStyles from './styles';
 import * as api from '../../../api';
-import { likePost } from '../../../actions/posts';
 import PostModel from '../../../models/postModel';
 import { queryCache, useMutation } from 'react-query';
 import { ALL_POSTS } from '../../../constants/apiPredicates';
@@ -25,16 +24,28 @@ interface Props {
 }
 
 const Post = ({ post, setCurrentId }: Props) => {
-	const dispatch = useDispatch();
 	const classes = useStyles();
 
-	const [deletePost] = useMutation((id: string) => api.deletePost2(id), {
+	const [deletePost] = useMutation((id: string) => api.deletePost(id), {
 		onSuccess: () => {
 			queryCache.cancelQueries(ALL_POSTS);
 
 			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
 				if (current === undefined) return [];
 				return current.filter((p) => p._id !== post._id);
+			});
+		},
+	});
+	const [likePost] = useMutation((id: string) => api.likePost(id), {
+		onSuccess: (updatedPost) => {
+			queryCache.cancelQueries(ALL_POSTS);
+
+			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
+				if (current === undefined) return [updatedPost];
+				return current.map((p) => {
+					if (p._id === updatedPost._id) return updatedPost;
+					else return p;
+				});
 			});
 		},
 	});
@@ -77,7 +88,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 					size="small"
 					color="primary"
 					onClick={() => {
-						dispatch(likePost(post._id));
+						likePost(post._id);
 					}}>
 					<ThumbsUpAltIcon fontSize="small" />
 					&nbsp; Like &nbsp;

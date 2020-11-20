@@ -24,9 +24,11 @@ export async function updatePost(id: string, updatedPost: PostDto) {
 	return data;
 }
 
-export async function deletePost2(id: string) {
+export async function deletePost(id: string) {
 	await axios.delete(`${endpoint}/${id}`);
 }
 
-export const deletePost = (id: string) => axios.delete(`${endpoint}/${id}`);
-export const likePost = (id: string) => axios.patch(`${endpoint}/${id}/like`);
+export async function likePost(id: string) {
+	const { data } = await axios.patch<PostModel>(`${endpoint}/${id}/like`);
+	return data;
+}
