@@ -53,7 +53,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 		<Card className={classes.card}>
 			<CardMedia
 				className={classes.media}
-				image={post.selectedFile}
+				image={post.imageUrl}
 				title={post.title}
 			/>
 			<div className={classes.overlay}>

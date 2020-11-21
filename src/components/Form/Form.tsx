@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { queryCache, useMutation } from 'react-query';
-import { TextField, Button, Typography, Paper } from '@material-ui/core';
+import {
+	TextField,
+	Button,
+	Typography,
+	Paper,
+	Dialog,
+	DialogTitle,
+	DialogActions,
+	DialogContentText,
+	DialogContent,
+} from '@material-ui/core';
 //@ts-ignore
-import FileBase from 'react-file-base64';
 import useStyles from './styles';
 import * as api from '../../api';
 import { ALL_POSTS } from '../../constants/apiPredicates';
@@ -20,7 +29,7 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		?.find((p) => p._id === currentId);
 
 	useEffect(() => {
-		if (post) setPostData(post);
+		if (post) setPostData({ ...post, imageFile: '' });
 	}, [post]);
 
 	const [postData, setPostData] = useState<PostDto>({
@@ -28,8 +37,9 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		title: '',
 		message: '',
 		tags: [],
-		selectedFile: '',
+		imageFile: '',
 	});
+	const [errorDialogOpen, showErrorDialogOpen] = useState(false);
 	const classes = useStyles();
 
 	const [createPost] = useMutation(() => api.createPost(postData), {
@@ -89,9 +99,39 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 			title: '',
 			message: '',
 			tags: [],
-			selectedFile: '',
+			imageFile: '',
 		});
 	};
+
+	const closeDialog = () => {
+		showErrorDialogOpen(false);
+	};
+
+	const onDismiss = () => {
+		if (imageRef.current) imageRef.current.value = '';
+		closeDialog();
+	};
+
+	const getBase64 = (file: File) => {
+		const BYTES_IN_ONE_MEGA_BYTE = 1000000;
+		if (file.size > 2 * BYTES_IN_ONE_MEGA_BYTE) {
+			showErrorDialogOpen(true);
+			return;
+		}
+		let reader = new FileReader();
+		reader.onload = function () {
+			setPostData({
+				...postData,
+				imageFile: reader.result?.toString() ?? '',
+			});
+		};
+		reader.onerror = function (error) {
+			console.error(error);
+		};
+		reader.readAsDataURL(file);
+	};
+
+	const imageRef = React.createRef<HTMLInputElement>();
 	return (
 		<Paper className={classes.paper}>
 			<form
@@ -146,13 +186,19 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					}
 				/>
 				<div className={classes.fileInput}>
-					<FileBase
+					<input
 						type="file"
-						multiple={false}
-						onDone={({ base64 }: any) =>
-							setPostData({ ...postData, selectedFile: base64 })
-						}
+						accept="image/*"
+						ref={imageRef}
+						alt="Submit"
+						onChange={(e) => {
+							const files = e.target.files;
+							if (files && files.length !== 0) {
+								getBase64(files[0]);
+							}
+						}}
 					/>
+					<Typography>(Max filesize = 2MB)</Typography>
 				</div>
 				<Button
 					className={classes.buttonSubmit}
@@ -173,6 +219,25 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					Clear
 				</Button>
 			</form>
+			<Dialog
+				open={errorDialogOpen}
+				onClose={closeDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description">
+				<DialogTitle id="alert-dialog-title">
+					File is too large!
+				</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						{'Please select a file which is no bigger than 2MB'}
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={onDismiss} color="primary" autoFocus>
+						Dismiss
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</Paper>
 	);
 };
