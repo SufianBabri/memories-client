@@ -131,7 +131,7 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		reader.readAsDataURL(file);
 	};
 
-	const imageRef = React.createRef<HTMLInputElement>();
+	const imageRef = React.useRef<HTMLInputElement>(null);
 	return (
 		<Paper className={classes.paper}>
 			<form
