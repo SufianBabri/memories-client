@@ -29,20 +29,20 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		?.find((p) => p._id === currentId);
 
 	useEffect(() => {
-		if (post) setPostData({ ...post, imageFile: '' });
+		if (post) setPostDto({ ...post, imageBase64: '' });
 	}, [post]);
 
-	const [postData, setPostData] = useState<PostDto>({
+	const [postDto, setPostDto] = useState<PostDto>({
 		creator: '',
 		title: '',
 		message: '',
 		tags: [],
-		imageFile: '',
+		imageBase64: '',
 	});
 	const [errorDialogOpen, showErrorDialogOpen] = useState(false);
 	const classes = useStyles();
 
-	const [createPost] = useMutation(() => api.createPost(postData), {
+	const [createPost] = useMutation(() => api.createPost(postDto), {
 		onSuccess: (newPost) => {
 			queryCache.cancelQueries(ALL_POSTS);
 
@@ -60,7 +60,7 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		},
 	});
 	const [updatePost] = useMutation(
-		(id: string) => api.updatePost(id, postData),
+		(id: string) => api.updatePost(id, postDto),
 		{
 			onSuccess: (newPost) => {
 				queryCache.cancelQueries(ALL_POSTS);
@@ -94,12 +94,12 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 	};
 	const clear = () => {
 		setCurrentId(null);
-		setPostData({
+		setPostDto({
 			creator: '',
 			title: '',
 			message: '',
 			tags: [],
-			imageFile: '',
+			imageBase64: '',
 		});
 	};
 
@@ -120,9 +120,9 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		}
 		let reader = new FileReader();
 		reader.onload = function () {
-			setPostData({
-				...postData,
-				imageFile: reader.result?.toString() ?? '',
+			setPostDto({
+				...postDto,
+				imageBase64: reader.result?.toString() ?? '',
 			});
 		};
 		reader.onerror = function (error) {
@@ -147,9 +147,9 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					variant="outlined"
 					label="Creator"
 					fullWidth
-					value={postData.creator}
+					value={postDto.creator}
 					onChange={(e) =>
-						setPostData({ ...postData, creator: e.target.value })
+						setPostDto({ ...postDto, creator: e.target.value })
 					}
 				/>
 				<TextField
@@ -157,9 +157,9 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					variant="outlined"
 					label="Title"
 					fullWidth
-					value={postData.title}
+					value={postDto.title}
 					onChange={(e) =>
-						setPostData({ ...postData, title: e.target.value })
+						setPostDto({ ...postDto, title: e.target.value })
 					}
 				/>
 				<TextField
@@ -167,9 +167,9 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					variant="outlined"
 					label="Message"
 					fullWidth
-					value={postData.message}
+					value={postDto.message}
 					onChange={(e) =>
-						setPostData({ ...postData, message: e.target.value })
+						setPostDto({ ...postDto, message: e.target.value })
 					}
 				/>
 				<TextField
@@ -177,10 +177,10 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					variant="outlined"
 					label="Tags"
 					fullWidth
-					value={postData.tags}
+					value={postDto.tags}
 					onChange={(e) =>
-						setPostData({
-							...postData,
+						setPostDto({
+							...postDto,
 							tags: e.target.value.split(','),
 						})
 					}
