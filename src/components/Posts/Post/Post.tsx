@@ -51,20 +51,30 @@ const Post = ({ post, setCurrentId }: Props) => {
 			},
 		}
 	);
-	const [likePost] = useMutation((id: string) => api.likePost(id), {
-		onSuccess: (updatedPost) => {
-			queryCache.cancelQueries(ALL_POSTS);
+	const [likePost] = useMutation<PostModel, Error, PostModel, PostModel[]>(
+		(post) => api.likePost(post._id),
+		{
+			onMutate: (updatedPost) => {
+				queryCache.cancelQueries(ALL_POSTS);
 
-			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
-				if (current === undefined) return [updatedPost];
-				return current.map((p) => {
-					if (p._id === updatedPost._id) return updatedPost;
-					else return p;
+				const prev =
+					queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
+
+				queryCache.setQueryData<PostModel[]>(ALL_POSTS, function (
+					current
+				) {
+					updatedPost.likeCount++;
+					if (current === undefined) return [updatedPost];
+					return current.map((p) => {
+						if (p._id === updatedPost._id) return updatedPost;
+						else return p;
+					});
 				});
-			});
-		},
-		onSettled: () => queryCache.refetchQueries(ALL_POSTS),
-	});
+				return prev;
+			},
+			onSettled: () => queryCache.refetchQueries(ALL_POSTS),
+		}
+	);
 	return (
 		<Card className={classes.card}>
 			<CardMedia
@@ -104,7 +114,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 					size="small"
 					color="primary"
 					onClick={() => {
-						likePost(post._id);
+						likePost(post);
 					}}>
 					<ThumbsUpAltIcon fontSize="small" />
 					&nbsp; Like &nbsp;
