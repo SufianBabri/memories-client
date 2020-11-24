@@ -6,9 +6,11 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const endpoint = 'posts';
 
-export async function fetchPosts() {
-	const { data } = await axios.get<PostModel[]>(endpoint);
-	return data;
+export async function fetchPosts(cachedPosts: PostModel[]) {
+	const res = await axios.get<PostModel[]>(endpoint);
+	if (res.status === 304) return cachedPosts;
+
+	return res['data'];
 }
 
 export async function createPost(newPost: PostDto) {
