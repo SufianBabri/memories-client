@@ -72,6 +72,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 				});
 				return prev;
 			},
+			onError: () => console.error('Could not like the post'),
 			onSettled: () => queryCache.refetchQueries(ALL_POSTS),
 		}
 	);
