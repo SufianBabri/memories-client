@@ -14,11 +14,13 @@ const MySnackbar: React.FC<IMySnackbarProps> = (props) => {
 
 	if (props.text === undefined) return null;
 
+	const autoHideDuration = props.autoHideDuration ?? 5000;
+
 	return (
 		<Snackbar
 			message={props.text}
 			onClose={() => snackbarContext.setSnackbarText(undefined)}
-			autoHideDuration={props.autoHideDuration}
+			autoHideDuration={autoHideDuration}
 			open={props.text !== undefined}
 			anchorOrigin={{
 				vertical: 'bottom',
