@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
-import { Container, AppBar, Typography, Grow, Grid } from '@material-ui/core';
+import {
+	Container,
+	AppBar,
+	Typography,
+	Grow,
+	Grid,
+	Snackbar,
+} from '@material-ui/core';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import memories from './images/memories.png';
 import Posts from './components/Posts/Posts';
 import Form from './components/Form/Form';
 import useStyles from './styles';
+import MySnackbar from './components/alerts/MySnackbar';
+import SnackbarContext from './context/SnackbarContext';
+import { Alert } from '@material-ui/lab';
 
 const App = () => {
 	const [currentId, setCurrentId] = useState<string | null>(null);
 	const classes = useStyles();
+	const [snackbarText, setSnackbarText] = useState<string | undefined>(
+		undefined
+	);
 
 	return (
 		<Container maxWidth="lg">
@@ -31,22 +44,28 @@ const App = () => {
 			</AppBar>
 			<Grow in>
 				<Container>
-					<Grid
-						container
-						className={classes.mainContainer}
-						justify="space-between"
-						alignItems="stretch"
-						spacing={3}>
-						<Grid item xs={12} sm={7}>
-							<Posts setCurrentId={setCurrentId} />
+					<SnackbarContext.Provider
+						value={{
+							setSnackbarText: (text) => setSnackbarText(text),
+						}}>
+						<MySnackbar text={snackbarText} />
+						<Grid
+							container
+							className={classes.mainContainer}
+							justify="space-between"
+							alignItems="stretch"
+							spacing={3}>
+							<Grid item xs={12} sm={7}>
+								<Posts setCurrentId={setCurrentId} />
+							</Grid>
+							<Grid item xs={12} sm={4}>
+								<Form
+									currentId={currentId}
+									setCurrentId={setCurrentId}
+								/>
+							</Grid>
 						</Grid>
-						<Grid item xs={12} sm={4}>
-							<Form
-								currentId={currentId}
-								setCurrentId={setCurrentId}
-							/>
-						</Grid>
-					</Grid>
+					</SnackbarContext.Provider>
 				</Container>
 			</Grow>
 			{process.env.NODE_ENV === 'development' && (

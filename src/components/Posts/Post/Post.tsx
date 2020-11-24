@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
 	Card,
 	CardActions,
@@ -10,13 +10,13 @@ import {
 import ThumbsUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import useStyles from './styles';
 import * as api from '../../../api';
 import PostModel from '../../../models/postModel';
 import { queryCache, useMutation } from 'react-query';
 import { ALL_POSTS } from '../../../constants/apiPredicates';
+import SnackbarContext from '../../../context/SnackbarContext';
 
 interface Props {
 	post: PostModel;
@@ -25,17 +25,32 @@ interface Props {
 
 const Post = ({ post, setCurrentId }: Props) => {
 	const classes = useStyles();
+	const snackbarContext = useContext(SnackbarContext);
 
-	const [deletePost] = useMutation((id: string) => api.deletePost(id), {
-		onSuccess: () => {
-			queryCache.cancelQueries(ALL_POSTS);
+	const [deletePost] = useMutation<void, Error, PostModel, PostModel[]>(
+		(post) => api.deletePost(post._id),
+		{
+			onMutate: () => {
+				queryCache.cancelQueries(ALL_POSTS);
+				const prev =
+					queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
 
-			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
-				if (current === undefined) return [];
-				return current.filter((p) => p._id !== post._id);
-			});
-		},
-	});
+				queryCache.setQueryData<PostModel[]>(ALL_POSTS, (posts) => {
+					if (posts === undefined) return [];
+					return posts.filter((p) => p._id !== post._id);
+				});
+
+				return prev;
+			},
+			onError: () => {
+				console.error('request failed');
+				snackbarContext.setSnackbarText('Delete action failed');
+			},
+			onSettled: () => {
+				queryCache.refetchQueries(ALL_POSTS);
+			},
+		}
+	);
 	const [likePost] = useMutation((id: string) => api.likePost(id), {
 		onSuccess: (updatedPost) => {
 			queryCache.cancelQueries(ALL_POSTS);
@@ -48,6 +63,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 				});
 			});
 		},
+		onSettled: () => queryCache.refetchQueries(ALL_POSTS),
 	});
 	return (
 		<Card className={classes.card}>
@@ -97,7 +113,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 				<Button
 					size="small"
 					color="primary"
-					onClick={() => deletePost(post._id)}>
+					onClick={() => deletePost(post)}>
 					<DeleteIcon fontSize="small" />
 					&nbsp; Delete
 				</Button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { queryCache, useMutation } from 'react-query';
 import {
 	TextField,
@@ -17,19 +17,28 @@ import * as api from '../../api';
 import { ALL_POSTS } from '../../constants/apiPredicates';
 import PostDto from '../../dto/postDto';
 import PostModel from '../../models/postModel';
+import SnackbarContext from '../../context/SnackbarContext';
 
 interface Prop {
 	currentId: string | null;
 	setCurrentId(id: string | null): void;
 }
 
+interface UpdateInfo {
+	oldPost: PostModel;
+	newPost: PostDto;
+}
+
 const Form = ({ currentId, setCurrentId }: Prop) => {
 	const post = queryCache
 		.getQueryData<PostModel[]>(ALL_POSTS)
 		?.find((p) => p._id === currentId);
+	const snackbarContext = useContext(SnackbarContext);
 
 	useEffect(() => {
-		if (post) setPostDto({ ...post, imageBase64: '' });
+		if (post) {
+			setPostDto({ ...post, imageBase64: '' });
+		}
 	}, [post]);
 
 	const [postDto, setPostDto] = useState<PostDto>({
@@ -41,58 +50,111 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 	});
 	const [errorDialogOpen, showErrorDialogOpen] = useState(false);
 	const classes = useStyles();
+	let tempPostDto = { ...postDto };
 
-	const [createPost] = useMutation(() => api.createPost(postDto), {
-		onSuccess: (newPost) => {
-			queryCache.cancelQueries(ALL_POSTS);
-
-			queryCache.setQueryData<PostModel[]>(ALL_POSTS, (current) => {
-				if (current === undefined) return [newPost];
-				return [...current, newPost];
-			});
-
-			queryCache.refetchQueries(ALL_POSTS);
-		},
-		onError: (e) => console.error(e),
-		onSettled: () => {
-			clear();
-			queryCache.refetchQueries(ALL_POSTS);
-		},
-	});
-	const [updatePost] = useMutation(
-		(id: string) => api.updatePost(id, postDto),
+	const [createPost] = useMutation<PostModel, Error, PostDto, PostModel[]>(
+		(postDto) => api.createPost(postDto),
 		{
-			onSuccess: (newPost) => {
+			onMutate: (newPostDto) => {
 				queryCache.cancelQueries(ALL_POSTS);
+				tempPostDto = { ...postDto };
+				clearForm();
+
+				const prev =
+					queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
+
+				queryCache.setQueryData<PostModel[]>(ALL_POSTS, function (
+					current
+				) {
+					const tempPostObject = {
+						...newPostDto,
+						_id: new Date().toISOString(),
+						createdAt: new Date().toISOString(),
+						imageUrl: newPostDto.imageBase64,
+						likeCount: 0,
+					};
+					if (current === undefined) return [tempPostObject];
+
+					return [...current, tempPostObject];
+				});
+
+				return prev;
+			},
+			onError: (e) => {
+				snackbarContext.setSnackbarText(
+					'Error occurred while saving your memory...'
+				);
+				console.error(e);
+				Object.assign(postDto, tempPostDto);
+			},
+			onSettled: () => {
+				queryCache.refetchQueries(ALL_POSTS);
+			},
+		}
+	);
+	const [updatePost] = useMutation<PostModel, Error, UpdateInfo, PostModel[]>(
+		({ oldPost, newPost }) => api.updatePost(oldPost._id, newPost),
+		{
+			onMutate: (variables) => {
+				const { newPost } = variables;
+				clearForm();
+
+				queryCache.cancelQueries(ALL_POSTS);
+				const prev =
+					queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
 
 				queryCache.setQueryData<PostModel[]>(ALL_POSTS, (posts) => {
-					if (posts === undefined) return [newPost];
+					if (posts === undefined) {
+						const tempPostObject = {
+							...newPost,
+							_id: new Date().toISOString(),
+							createdAt: new Date().toISOString(),
+							imageUrl: newPost.imageBase64,
+							likeCount: 0,
+						};
+						return [tempPostObject];
+					}
+
 					posts.map((p) => {
-						if (p._id === currentId) return newPost;
+						if (p._id === currentId)
+							return {
+								...newPost,
+								_id: new Date().toISOString(),
+								createdAt: new Date().toISOString(),
+								imageUrl: newPost.imageBase64,
+								likeCount: 0,
+							};
 						else return p;
 					});
 					return posts;
 				});
-				queryCache.refetchQueries(ALL_POSTS);
+				return prev;
 			},
-			onError: (e) => console.error(e),
+			onError: (e) => {
+				console.error(e);
+			},
 			onSettled: () => {
-				clear();
 				queryCache.refetchQueries(ALL_POSTS);
 			},
 		}
 	);
 
-	const handleSubmit = (e: any) => {
+	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
 
-		if (currentId) {
-			updatePost(currentId);
+		const post = currentId
+			? queryCache
+					.getQueryData<PostModel[]>(ALL_POSTS)
+					?.find((p) => p._id === currentId)
+			: undefined;
+
+		if (post) {
+			updatePost({ oldPost: post, newPost: postDto });
 		} else {
-			createPost();
+			createPost(postDto);
 		}
 	};
-	const clear = () => {
+	const clearForm = () => {
 		setCurrentId(null);
 		setPostDto({
 			creator: '',
@@ -101,6 +163,7 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 			tags: [],
 			imageBase64: '',
 		});
+		if (imageRef.current) imageRef.current.value = '';
 	};
 
 	const closeDialog = () => {
@@ -214,7 +277,7 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 					variant="contained"
 					color="secondary"
 					size="small"
-					onClick={clear}
+					onClick={clearForm}
 					fullWidth>
 					Clear
 				</Button>
