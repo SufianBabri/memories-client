@@ -3,7 +3,7 @@ export default interface PostModel {
 	title: string;
 	message: string;
 	tags: string[];
-	selectedFile: string;
+	imageUrl: string;
 	creator: string;
 	createdAt: string;
 	likeCount: number;

@@ -3,5 +3,5 @@ export default interface PostDto {
 	title: string;
 	message: string;
 	tags: string[];
-	selectedFile: string;
+	imageBase64: string;
 }
