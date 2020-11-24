@@ -12,7 +12,9 @@ interface Props {
 
 const Posts = ({ setCurrentId }: Props) => {
 	const classes = useStyles();
-	const { data, status } = useQuery(ALL_POSTS, fetchPosts);
+	const { data, status } = useQuery(ALL_POSTS, fetchPosts, {
+		keepPreviousData: true,
+	});
 
 	if (status === 'loading' || data === undefined) return <CircularProgress />;
 	else if (status === 'error') {
