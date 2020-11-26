@@ -1,11 +1,10 @@
 import React from 'react';
 import Post from './Post/Post';
 import { Grid, CircularProgress, Typography } from '@material-ui/core';
-import { useQuery, queryCache } from 'react-query';
+import { useQuery } from 'react-query';
 import { fetchPosts } from '../../api';
 import { ALL_POSTS } from '../../constants/apiPredicates';
 import useStyles from './styles';
-import PostModel from '../../models/postModel';
 
 interface Props {
 	setCurrentId(id: string): void;
@@ -13,14 +12,9 @@ interface Props {
 
 const Posts = ({ setCurrentId }: Props) => {
 	const classes = useStyles();
-	const cachedPosts = queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
-	const { data, status } = useQuery(
-		ALL_POSTS,
-		() => fetchPosts(cachedPosts),
-		{
-			keepPreviousData: true,
-		}
-	);
+	const { data, status } = useQuery(ALL_POSTS, fetchPosts, {
+		keepPreviousData: true,
+	});
 
 	if (status === 'loading' || data === undefined) return <CircularProgress />;
 	else if (status === 'error') {
