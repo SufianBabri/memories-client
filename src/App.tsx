@@ -4,17 +4,18 @@ import {
 	AppBar,
 	Typography,
 	Grow,
+	Toolbar,
+	IconButton,
 	Grid,
-	Snackbar,
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import memories from './images/memories.png';
 import Posts from './components/Posts/Posts';
 import Form from './components/Form/Form';
 import useStyles from './styles';
 import MySnackbar from './components/alerts/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
-import { Alert } from '@material-ui/lab';
+import AboutDialog from './components/alerts/AboutDialog';
 
 const App = () => {
 	const [currentId, setCurrentId] = useState<string | null>(null);
@@ -22,27 +23,25 @@ const App = () => {
 	const [snackbarText, setSnackbarText] = useState<string | undefined>(
 		undefined
 	);
+	const [openAbout, setOpenAbout] = useState(false);
 
 	return (
-		<Container maxWidth="lg">
-			<AppBar
-				className={classes.appBar}
-				position="static"
-				color="inherit">
-				<Typography
-					className={classes.heading}
-					variant="h2"
-					align="center">
-					Memories
-				</Typography>
-				<img
-					className={classes.image}
-					src={memories}
-					alt="memories"
-					height="60"
-				/>
+		<Container maxWidth="lg" className={classes.container}>
+			<AppBar position="static">
+				<Toolbar>
+					<Typography variant="h6" className={classes.title}>
+						Memories
+					</Typography>
+					<IconButton
+						edge="start"
+						color="inherit"
+						aria-label="about app"
+						onClick={() => setOpenAbout(true)}>
+						<InfoIcon />
+					</IconButton>
+				</Toolbar>
 			</AppBar>
-			<Grow in>
+			<Grow in style={{ marginTop: 10 }}>
 				<Container>
 					<SnackbarContext.Provider
 						value={{
@@ -71,6 +70,7 @@ const App = () => {
 			{process.env.NODE_ENV === 'development' && (
 				<ReactQueryDevtools initialIsOpen={false} />
 			)}
+			<AboutDialog openAbout={openAbout} setOpenAbout={setOpenAbout} />
 		</Container>
 	);
 };
