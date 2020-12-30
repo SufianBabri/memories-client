@@ -18,15 +18,21 @@ const MySnackbar: React.FC<IMySnackbarProps> = (props) => {
 
 	return (
 		<Snackbar
-			message={props.text}
 			onClose={() => snackbarContext.setSnackbarText(undefined)}
 			autoHideDuration={autoHideDuration}
 			open={props.text !== undefined}
 			anchorOrigin={{
 				vertical: 'bottom',
 				horizontal: 'center',
-			}}
-		/>
+			}}>
+			<SnackbarContent
+				message={props.text}
+				style={{
+					backgroundColor: 'white',
+					color: 'black',
+				}}
+			/>
+		</Snackbar>
 	);
 };
 
