@@ -27,7 +27,9 @@ const App = () => {
 
 	return (
 		<Container maxWidth="lg" className={classes.container}>
-			<AppBar position="static">
+			<AppBar
+				position="static"
+				style={{ position: 'fixed', margin: '0' }}>
 				<Toolbar>
 					<Typography variant="h6" className={classes.title}>
 						Memories
@@ -41,7 +43,7 @@ const App = () => {
 					</IconButton>
 				</Toolbar>
 			</AppBar>
-			<Grow in style={{ marginTop: 10 }}>
+			<Grow in style={{ paddingTop: 90 }}>
 				<Container>
 					<SnackbarContext.Provider
 						value={{
