@@ -16,7 +16,12 @@ const Posts = ({ setCurrentId }: Props) => {
 		keepPreviousData: true,
 	});
 
-	if (status === 'loading' || data === undefined) return <CircularProgress />;
+	if (status === 'loading' || data === undefined)
+		return (
+			<Grid container justify="center" style={{ paddingTop: 50 }}>
+				<CircularProgress style={{ alignItems: 'center' }} />
+			</Grid>
+		);
 	else if (status === 'error') {
 		return (
 			<Typography variant="h5" align="center" color="error">

@@ -11,7 +11,6 @@ import {
 	DialogContentText,
 	DialogContent,
 } from '@material-ui/core';
-//@ts-ignore
 import useStyles from './styles';
 import * as api from '../../api';
 import { ALL_POSTS } from '../../constants/apiPredicates';
@@ -63,20 +62,21 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 				const prev =
 					queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
 
-				queryCache.setQueryData<PostModel[]>(ALL_POSTS, function (
-					current
-				) {
-					const tempPostObject = {
-						...newPostDto,
-						_id: new Date().toISOString(),
-						createdAt: new Date().toISOString(),
-						imageUrl: newPostDto.imageBase64,
-						likeCount: 0,
-					};
-					if (current === undefined) return [tempPostObject];
+				queryCache.setQueryData<PostModel[]>(
+					ALL_POSTS,
+					function (current) {
+						const tempPostObject = {
+							...newPostDto,
+							_id: new Date().toISOString(),
+							createdAt: new Date().toISOString(),
+							imageUrl: newPostDto.imageBase64,
+							likeCount: 0,
+						};
+						if (current === undefined) return [tempPostObject];
 
-					return [...current, tempPostObject];
-				});
+						return [...current, tempPostObject];
+					}
+				);
 
 				return prev;
 			},
@@ -150,6 +150,8 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 
 		if (post) {
 			updatePost({ oldPost: post, newPost: postDto });
+		} else if (postDto.imageBase64.length === 0) {
+			snackbarContext.setSnackbarText('Please select an image first!');
 		} else {
 			createPost(postDto);
 		}
