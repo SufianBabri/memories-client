@@ -26,7 +26,7 @@ const App = () => {
 	const [openAbout, setOpenAbout] = useState(false);
 
 	return (
-		<Container maxWidth="lg" className={classes.container}>
+		<Container maxWidth={false} className={classes.container}>
 			<AppBar
 				position="static"
 				style={{ position: 'fixed', margin: '0' }}>
