@@ -2,7 +2,7 @@ import React from 'react';
 import Post from './Post/Post';
 import { Grid, CircularProgress, Typography } from '@material-ui/core';
 import { useQuery } from 'react-query';
-import { fetchPosts } from '../../api';
+import { fetchPosts } from '../../data/api';
 import { ALL_POSTS } from '../../constants/apiPredicates';
 import useStyles from './styles';
 

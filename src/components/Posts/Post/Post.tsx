@@ -12,7 +12,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import useStyles from './styles';
-import * as api from '../../../api';
+import * as api from '../../../data/api';
 import PostModel from '../../../models/postModel';
 import { queryCache, useMutation } from 'react-query';
 import { ALL_POSTS } from '../../../constants/apiPredicates';

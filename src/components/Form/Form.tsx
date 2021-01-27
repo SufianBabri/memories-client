@@ -10,9 +10,11 @@ import {
 	DialogActions,
 	DialogContentText,
 	DialogContent,
+	Box,
 } from '@material-ui/core';
 import useStyles from './styles';
-import * as api from '../../api';
+import * as api from '../../data/api';
+import * as cache from '../../data/cache';
 import { ALL_POSTS } from '../../constants/apiPredicates';
 import PostDto from '../../dto/postDto';
 import PostModel from '../../models/postModel';
@@ -29,9 +31,7 @@ interface UpdateInfo {
 }
 
 const Form = ({ currentId, setCurrentId }: Prop) => {
-	const post = queryCache
-		.getQueryData<PostModel[]>(ALL_POSTS)
-		?.find((p) => p._id === currentId);
+	const post = cache.getPost(currentId);
 	const snackbarContext = useContext(SnackbarContext);
 
 	useEffect(() => {
@@ -142,12 +142,6 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
 
-		const post = currentId
-			? queryCache
-					.getQueryData<PostModel[]>(ALL_POSTS)
-					?.find((p) => p._id === currentId)
-			: undefined;
-
 		if (post) {
 			updatePost({ oldPost: post, newPost: postDto });
 		} else if (postDto.imageBase64.length === 0) {
@@ -198,112 +192,114 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 
 	const imageRef = React.useRef<HTMLInputElement>(null);
 	return (
-		<Paper className={classes.paper}>
-			<form
-				autoComplete="off"
-				noValidate
-				className={`${classes.root} ${classes.form}`}
-				onSubmit={handleSubmit}>
-				<Typography variant="h6">
-					{currentId ? 'Editing' : 'Creating'} a Memory
-				</Typography>
-				<TextField
-					name="creator"
-					variant="outlined"
-					label="Creator"
-					fullWidth
-					value={postDto.creator}
-					onChange={(e) =>
-						setPostDto({ ...postDto, creator: e.target.value })
-					}
-				/>
-				<TextField
-					name="title"
-					variant="outlined"
-					label="Title"
-					fullWidth
-					value={postDto.title}
-					onChange={(e) =>
-						setPostDto({ ...postDto, title: e.target.value })
-					}
-				/>
-				<TextField
-					name="message"
-					variant="outlined"
-					label="Message"
-					fullWidth
-					value={postDto.message}
-					onChange={(e) =>
-						setPostDto({ ...postDto, message: e.target.value })
-					}
-				/>
-				<TextField
-					name="tags"
-					variant="outlined"
-					label="Tags"
-					fullWidth
-					value={postDto.tags}
-					onChange={(e) =>
-						setPostDto({
-							...postDto,
-							tags: e.target.value.split(','),
-						})
-					}
-				/>
-				<div className={classes.fileInput}>
-					<input
-						type="file"
-						accept="image/*"
-						ref={imageRef}
-						alt="Submit"
-						onChange={(e) => {
-							const files = e.target.files;
-							if (files && files.length !== 0) {
-								getBase64(files[0]);
-							}
-						}}
+		<Box display="flex" justifyContent="center">
+			<Paper className={classes.paper}>
+				<form
+					autoComplete="off"
+					noValidate
+					className={`${classes.root} ${classes.form}`}
+					onSubmit={handleSubmit}>
+					<Typography variant="h6">
+						{currentId ? 'Editing' : 'Creating'} a Memory
+					</Typography>
+					<TextField
+						name="creator"
+						variant="outlined"
+						label="Creator"
+						fullWidth
+						value={postDto.creator}
+						onChange={(e) =>
+							setPostDto({ ...postDto, creator: e.target.value })
+						}
 					/>
-					<Typography>(Max filesize = 2MB)</Typography>
-				</div>
-				<Button
-					className={classes.buttonSubmit}
-					variant="contained"
-					color="primary"
-					size="large"
-					type="submit"
-					fullWidth>
-					Submit
-				</Button>
-				<Button
-					className={classes.buttonSubmit}
-					variant="contained"
-					color="secondary"
-					size="small"
-					onClick={clearForm}
-					fullWidth>
-					Clear
-				</Button>
-			</form>
-			<Dialog
-				open={errorDialogOpen}
-				onClose={closeDialog}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description">
-				<DialogTitle id="alert-dialog-title">
-					File is too large!
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						{'Please select a file which is no bigger than 2MB'}
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={onDismiss} color="primary" autoFocus>
-						Dismiss
+					<TextField
+						name="title"
+						variant="outlined"
+						label="Title"
+						fullWidth
+						value={postDto.title}
+						onChange={(e) =>
+							setPostDto({ ...postDto, title: e.target.value })
+						}
+					/>
+					<TextField
+						name="message"
+						variant="outlined"
+						label="Message"
+						fullWidth
+						value={postDto.message}
+						onChange={(e) =>
+							setPostDto({ ...postDto, message: e.target.value })
+						}
+					/>
+					<TextField
+						name="tags"
+						variant="outlined"
+						label="Tags"
+						fullWidth
+						value={postDto.tags}
+						onChange={(e) =>
+							setPostDto({
+								...postDto,
+								tags: e.target.value.split(','),
+							})
+						}
+					/>
+					<div className={classes.fileInput}>
+						<input
+							type="file"
+							accept="image/*"
+							ref={imageRef}
+							alt="Submit"
+							onChange={(e) => {
+								const files = e.target.files;
+								if (files && files.length !== 0) {
+									getBase64(files[0]);
+								}
+							}}
+						/>
+						<Typography>(Max filesize = 2MB)</Typography>
+					</div>
+					<Button
+						className={classes.buttonSubmit}
+						variant="contained"
+						color="primary"
+						size="large"
+						type="submit"
+						fullWidth>
+						Submit
 					</Button>
-				</DialogActions>
-			</Dialog>
-		</Paper>
+					<Button
+						className={classes.buttonSubmit}
+						variant="contained"
+						color="secondary"
+						size="small"
+						onClick={clearForm}
+						fullWidth>
+						Clear
+					</Button>
+				</form>
+				<Dialog
+					open={errorDialogOpen}
+					onClose={closeDialog}
+					aria-labelledby="alert-dialog-title"
+					aria-describedby="alert-dialog-description">
+					<DialogTitle id="alert-dialog-title">
+						File is too large!
+					</DialogTitle>
+					<DialogContent>
+						<DialogContentText id="alert-dialog-description">
+							{'Please select a file which is no bigger than 2MB'}
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={onDismiss} color="primary" autoFocus>
+							Dismiss
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</Paper>
+		</Box>
 	);
 };
 
