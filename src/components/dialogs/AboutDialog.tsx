@@ -9,12 +9,12 @@ import {
 } from '@material-ui/core';
 import packageJson from '../../../package.json';
 
-export interface IAboutDialogProps {
-	openAbout: boolean;
-	setOpenAbout(open: boolean): void;
+export interface IProps {
+	open: boolean;
+	setOpen(open: boolean): void;
 }
 
-const AboutDialog = ({ openAbout, setOpenAbout }: IAboutDialogProps) => {
+const AboutDialog = ({ open: openAbout, setOpen: setOpenAbout }: IProps) => {
 	const handleCloseAbout = () => setOpenAbout(false);
 	return (
 		<Dialog

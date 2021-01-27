@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import SnackbarContext from '../../context/SnackbarContext';
+import SnackbarContext from '../context/SnackbarContext';
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning';
 export type AlertVariant = 'filled' | 'outlined' | 'standard';

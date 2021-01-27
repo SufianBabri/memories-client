@@ -13,9 +13,9 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 import Posts from './components/Posts/Posts';
 import Form from './components/Form/Form';
 import useStyles from './styles';
-import MySnackbar from './components/alerts/MySnackbar';
+import MySnackbar from './components/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
-import AboutDialog from './components/alerts/AboutDialog';
+import AboutDialog from './components/dialogs/AboutDialog';
 
 const App = () => {
 	const [currentId, setCurrentId] = useState<string | null>(null);
@@ -52,7 +52,6 @@ const App = () => {
 						<MySnackbar text={snackbarText} />
 						<Grid
 							container
-							className={classes.mainContainer}
 							justify="space-between"
 							alignItems="stretch"
 							spacing={3}>
@@ -69,10 +68,10 @@ const App = () => {
 					</SnackbarContext.Provider>
 				</Container>
 			</Grow>
+			<AboutDialog open={openAbout} setOpen={setOpenAbout} />
 			{process.env.NODE_ENV === 'development' && (
 				<ReactQueryDevtools initialIsOpen={false} />
 			)}
-			<AboutDialog openAbout={openAbout} setOpenAbout={setOpenAbout} />
 		</Container>
 	);
 };
