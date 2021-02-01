@@ -13,7 +13,6 @@ import AddIcon from '@material-ui/icons/Add';
 import InfoIcon from '@material-ui/icons/Info';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import Posts from './components/Posts/Posts';
-import Form from './components/Form/Form';
 import useStyles from './styles';
 import MySnackbar, { Props as SnackbarProps } from './components/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
@@ -52,10 +51,6 @@ const App = () => {
 							setContent: (props) => setSnackbarProps(props),
 						}}>
 						<MySnackbar {...snackbarProps} />
-						<Form
-							currentId={currentId}
-							setCurrentId={setCurrentId}
-						/>
 						<Grid
 							container
 							justify="space-between"
