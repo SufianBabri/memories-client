@@ -1,39 +1,50 @@
 import React, { useContext } from 'react';
-import { Snackbar, SnackbarContent } from '@material-ui/core';
+import { Snackbar } from '@material-ui/core';
 import SnackbarContext from '../context/SnackbarContext';
+import MuiAlert from '@material-ui/lab/Alert';
+import Slide, { SlideProps } from '@material-ui/core/Slide';
+
+type TransitionProps = Omit<SlideProps, 'direction'>;
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning';
 export type AlertVariant = 'filled' | 'outlined' | 'standard';
-export interface IMySnackbarProps {
+export interface Props {
 	text?: string;
 	autoHideDuration?: number;
+	type?: AlertType;
 }
 
-const MySnackbar: React.FC<IMySnackbarProps> = (props) => {
+const MySnackbar: React.FC<Props> = ({
+	text,
+	autoHideDuration,
+	type,
+}: Props) => {
 	const snackbarContext = useContext(SnackbarContext);
 
-	if (props.text === undefined) return null;
+	if (text === undefined) return null;
 
-	const autoHideDuration = props.autoHideDuration ?? 5000;
-
+	const duration = autoHideDuration ?? 5000;
+	const severity = type ?? 'info';
+	const transition = TransitionUp;
 	return (
 		<Snackbar
-			onClose={() => snackbarContext.setSnackbarText(undefined)}
-			autoHideDuration={autoHideDuration}
-			open={props.text !== undefined}
+			onClose={() => snackbarContext.setContent(undefined)}
+			autoHideDuration={duration}
+			open={text !== undefined}
+			TransitionComponent={transition}
 			anchorOrigin={{
 				vertical: 'bottom',
 				horizontal: 'center',
 			}}>
-			<SnackbarContent
-				message={props.text}
-				style={{
-					backgroundColor: 'white',
-					color: 'black',
-				}}
-			/>
+			<MuiAlert elevation={6} variant="filled" severity={severity}>
+				{text}
+			</MuiAlert>
 		</Snackbar>
 	);
 };
+
+function TransitionUp(props: TransitionProps) {
+	return <Slide {...props} direction="up" />;
+}
 
 export default MySnackbar;

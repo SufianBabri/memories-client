@@ -44,7 +44,10 @@ const Post = ({ post, setCurrentId }: Props) => {
 			},
 			onError: () => {
 				console.error('request failed');
-				snackbarContext.setSnackbarText('Delete action failed');
+				snackbarContext.setContent({
+					text: 'Delete action failed',
+					type: 'error',
+				});
 			},
 			onSettled: () => {
 				queryCache.refetchQueries(ALL_POSTS);
@@ -84,7 +87,10 @@ const Post = ({ post, setCurrentId }: Props) => {
 		onError: (e, post, snapshot) => {
 			if (snapshot === undefined) return;
 
-			snackbarContext.setSnackbarText('Could not like the post!');
+			snackbarContext.setContent({
+				text: 'Could not save your like!',
+				type: 'error',
+			});
 
 			const posts = queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
 			const updatedPosts = posts.map((p) => {
@@ -106,7 +112,7 @@ const Post = ({ post, setCurrentId }: Props) => {
 		<Card className={classes.card}>
 			<CardMedia
 				className={classes.media}
-				image={post.imageUrl}
+				image={post.image}
 				title={post.title}
 			/>
 			<div className={classes.overlay}>

@@ -1,11 +1,12 @@
 import React from 'react';
+import { Props as SnackbarProps } from '../components/MySnackbar';
 
 export type SnackbarContextType = {
-	setSnackbarText: (text: string | undefined) => void;
+	setContent: (props?: SnackbarProps) => void;
 };
 
 const SnackbarContext = React.createContext<SnackbarContextType>({
-	setSnackbarText: (text) => console.warn('No implementation exists'),
+	setContent: (text) => console.warn('No implementation exists'),
 });
 
 export default SnackbarContext;

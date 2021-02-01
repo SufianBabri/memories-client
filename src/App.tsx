@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+	Fab,
 	Container,
 	AppBar,
 	Typography,
@@ -8,28 +9,29 @@ import {
 	IconButton,
 	Grid,
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import InfoIcon from '@material-ui/icons/Info';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import Posts from './components/Posts/Posts';
 import Form from './components/Form/Form';
 import useStyles from './styles';
-import MySnackbar from './components/MySnackbar';
+import MySnackbar, { Props as SnackbarProps } from './components/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
 import AboutDialog from './components/dialogs/AboutDialog';
+import MemoryDialog from './components/dialogs/MemoryDialog';
 
 const App = () => {
 	const [currentId, setCurrentId] = useState<string | null>(null);
 	const classes = useStyles();
-	const [snackbarText, setSnackbarText] = useState<string | undefined>(
-		undefined
-	);
+	const [snackbarProps, setSnackbarProps] = useState<
+		SnackbarProps | undefined
+	>(undefined);
 	const [openAbout, setOpenAbout] = useState(false);
+	const [openMemoryDialog, setOpenMemoryDialog] = useState(false);
 
 	return (
 		<Container maxWidth={false} className={classes.container}>
-			<AppBar
-				position="static"
-				style={{ position: 'fixed', margin: '0' }}>
+			<AppBar style={{ margin: '0' }}>
 				<Toolbar>
 					<Typography variant="h6" className={classes.title}>
 						Memories
@@ -47,9 +49,13 @@ const App = () => {
 				<Container>
 					<SnackbarContext.Provider
 						value={{
-							setSnackbarText: (text) => setSnackbarText(text),
+							setContent: (props) => setSnackbarProps(props),
 						}}>
-						<MySnackbar text={snackbarText} />
+						<MySnackbar {...snackbarProps} />
+						<Form
+							currentId={currentId}
+							setCurrentId={setCurrentId}
+						/>
 						<Grid
 							container
 							justify="space-between"
@@ -58,16 +64,26 @@ const App = () => {
 							<Grid item xs={12} sm={7}>
 								<Posts setCurrentId={setCurrentId} />
 							</Grid>
-							<Grid item xs={12} sm={4}>
-								<Form
-									currentId={currentId}
-									setCurrentId={setCurrentId}
-								/>
-							</Grid>
 						</Grid>
 					</SnackbarContext.Provider>
 				</Container>
 			</Grow>
+			<Fab
+				color="primary"
+				aria-label="create a memory"
+				style={{
+					position: 'fixed',
+					bottom: 10,
+					right: 10,
+				}}
+				onClick={() => setOpenMemoryDialog(true)}>
+				<AddIcon />
+			</Fab>
+			<MemoryDialog
+				open={openMemoryDialog}
+				setOpen={setOpenMemoryDialog}
+				showError={(msg) => setSnackbarProps({ text: msg })}
+			/>
 			<AboutDialog open={openAbout} setOpen={setOpenAbout} />
 			{process.env.NODE_ENV === 'development' && (
 				<ReactQueryDevtools initialIsOpen={false} />

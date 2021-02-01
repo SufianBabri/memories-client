@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { queryCache, useMutation } from 'react-query';
-import { TextField, Button, Typography, Paper, Box } from '@material-ui/core';
+import { TextField, Button, Typography } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import useStyles from './styles';
 import * as api from '../../data/api';
@@ -9,11 +9,11 @@ import { ALL_POSTS } from '../../constants/apiPredicates';
 import PostDto from '../../dto/postDto';
 import PostModel from '../../models/postModel';
 import SnackbarContext from '../../context/SnackbarContext';
-import ErrorDialog from '../dialogs/ErrorDialog';
 
-interface Prop {
+interface Props {
 	currentId: string | null;
 	setCurrentId(id: string | null): void;
+	showError(msg: string): void;
 }
 
 interface UpdateInfo {
@@ -21,10 +21,15 @@ interface UpdateInfo {
 	newPost: PostDto;
 }
 
-const Form = ({ currentId, setCurrentId }: Prop) => {
-	const post = cache.getPost(currentId);
+export default function MemoryForm({
+	currentId,
+	setCurrentId,
+	showError,
+}: Props) {
 	const snackbarContext = useContext(SnackbarContext);
-	const { register, handleSubmit } = useForm();
+	const post = cache.getPost(currentId);
+
+	const { register, handleSubmit, unregister } = useForm();
 
 	useEffect(() => {
 		if (post) {
@@ -39,7 +44,6 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 		tags: [],
 		imageBase64: '',
 	});
-	const [errorDialogOpen, setOpenErrorDialog] = useState(false);
 	const classes = useStyles();
 	let tempPostDto = { ...postDto };
 
@@ -157,7 +161,7 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 	const getBase64 = (file: File) => {
 		const BYTES_IN_ONE_MEGA_BYTE = 1000000;
 		if (file.size > 2 * BYTES_IN_ONE_MEGA_BYTE) {
-			setOpenErrorDialog(true);
+			showError('The image can not be larger than 2MB!');
 			return;
 		}
 		let reader = new FileReader();
@@ -175,104 +179,90 @@ const Form = ({ currentId, setCurrentId }: Prop) => {
 
 	const imageRef = React.useRef<HTMLInputElement>(null);
 	return (
-		<Box display="flex" justifyContent="center">
-			<Paper className={classes.paper}>
-				<form
-					autoComplete="off"
-					noValidate
-					className={`${classes.root} ${classes.form}`}
-					onSubmit={myHandleSubmit}>
-					<Typography variant="h6">
-						{currentId ? 'Editing' : 'Creating'} a Memory
-					</Typography>
-					<TextField
-						name="creator"
-						variant="outlined"
-						label="Creator"
-						fullWidth
-						value={postDto.creator}
-						onChange={(e) =>
-							setPostDto({ ...postDto, creator: e.target.value })
+		<form
+			autoComplete="off"
+			noValidate
+			className={`${classes.root} ${classes.form}`}
+			onSubmit={myHandleSubmit}>
+			<TextField
+				name="creator"
+				variant="outlined"
+				label="Creator"
+				fullWidth
+				value={postDto.creator}
+				onChange={(e) =>
+					setPostDto({ ...postDto, creator: e.target.value })
+				}
+			/>
+			<TextField
+				name="title"
+				variant="outlined"
+				label="Title"
+				fullWidth
+				value={postDto.title}
+				onChange={(e) =>
+					setPostDto({ ...postDto, title: e.target.value })
+				}
+			/>
+			<TextField
+				name="message"
+				variant="outlined"
+				label="Message"
+				rows={4}
+				rowsMax={4}
+				fullWidth
+				multiline={true}
+				value={postDto.message}
+				onChange={(e) =>
+					setPostDto({ ...postDto, message: e.target.value })
+				}
+			/>
+			<TextField
+				name="tags"
+				variant="outlined"
+				label="Tags"
+				fullWidth
+				value={postDto.tags}
+				onChange={(e) =>
+					setPostDto({
+						...postDto,
+						tags: e.target.value.split(','),
+					})
+				}
+			/>
+			<div className={classes.fileInput}>
+				<input
+					type="file"
+					accept="image/*"
+					ref={imageRef}
+					alt="Submit"
+					onChange={(e) => {
+						const files = e.target.files;
+						if (files && files.length !== 0) {
+							getBase64(files[0]);
 						}
-					/>
-					<TextField
-						name="title"
-						variant="outlined"
-						label="Title"
-						fullWidth
-						value={postDto.title}
-						onChange={(e) =>
-							setPostDto({ ...postDto, title: e.target.value })
-						}
-					/>
-					<TextField
-						name="message"
-						variant="outlined"
-						label="Message"
-						fullWidth
-						value={postDto.message}
-						onChange={(e) =>
-							setPostDto({ ...postDto, message: e.target.value })
-						}
-					/>
-					<TextField
-						name="tags"
-						variant="outlined"
-						label="Tags"
-						fullWidth
-						value={postDto.tags}
-						onChange={(e) =>
-							setPostDto({
-								...postDto,
-								tags: e.target.value.split(','),
-							})
-						}
-					/>
-					<div className={classes.fileInput}>
-						<input
-							type="file"
-							accept="image/*"
-							ref={imageRef}
-							alt="Submit"
-							onChange={(e) => {
-								const files = e.target.files;
-								if (files && files.length !== 0) {
-									getBase64(files[0]);
-								}
-							}}
-						/>
-						<Typography>(Max filesize = 2MB)</Typography>
-					</div>
-					<Button
-						className={classes.buttonSubmit}
-						variant="contained"
-						color="primary"
-						size="large"
-						type="submit"
-						fullWidth>
-						Submit
-					</Button>
-					<Button
-						className={classes.buttonSubmit}
-						variant="contained"
-						color="secondary"
-						size="small"
-						onClick={clearForm}
-						fullWidth>
-						Clear
-					</Button>
-				</form>
-				<ErrorDialog
-					open={errorDialogOpen}
-					setOpen={() => setOpenErrorDialog(true)}
-					onDismiss={() => {
-						if (imageRef.current) imageRef.current.value = '';
-						setOpenErrorDialog(false);
 					}}
 				/>
-			</Paper>
-		</Box>
+				<Typography>(Max filesize = 2MB)</Typography>
+			</div>
+			<Button
+				className={classes.buttonSubmit}
+				variant="contained"
+				color="primary"
+				size="large"
+				type="submit"
+				fullWidth>
+				Submit
+			</Button>
+			<Button
+				className={classes.buttonSubmit}
+				variant="contained"
+				color="secondary"
+				size="small"
+				onClick={clearForm}
+				fullWidth>
+				Clear
+			</Button>
+		</form>
 	);
-};
-
-export default Form;
+}
