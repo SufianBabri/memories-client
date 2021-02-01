@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core';
 import ThumbsUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import useStyles from './styles';
 import * as api from '../../../data/api';
@@ -20,10 +19,9 @@ import SnackbarContext from '../../../context/SnackbarContext';
 
 interface Props {
 	post: PostModel;
-	setCurrentId(id: string): void;
 }
 
-const Post = ({ post, setCurrentId }: Props) => {
+const Post = ({ post }: Props) => {
 	const classes = useStyles();
 	const snackbarContext = useContext(SnackbarContext);
 
@@ -120,14 +118,6 @@ const Post = ({ post, setCurrentId }: Props) => {
 				<Typography variant="body2">
 					{moment(post.createdAt).fromNow()}
 				</Typography>
-			</div>
-			<div className={classes.overlay2}>
-				<Button
-					style={{ color: 'white' }}
-					size="small"
-					onClick={() => setCurrentId(post._id)}>
-					<MoreHorizIcon fontSize="default" />
-				</Button>
 			</div>
 			<div className={classes.details}>
 				<Typography variant="body2" color="textSecondary">

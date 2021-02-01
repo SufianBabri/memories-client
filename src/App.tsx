@@ -20,7 +20,6 @@ import AboutDialog from './components/dialogs/AboutDialog';
 import MemoryDialog from './components/dialogs/MemoryDialog';
 
 const App = () => {
-	const [currentId, setCurrentId] = useState<string | null>(null);
 	const classes = useStyles();
 	const [snackbarProps, setSnackbarProps] = useState<
 		SnackbarProps | undefined
@@ -57,7 +56,7 @@ const App = () => {
 							alignItems="stretch"
 							spacing={3}>
 							<Grid item xs={12} sm={7}>
-								<Posts setCurrentId={setCurrentId} />
+								<Posts />
 							</Grid>
 						</Grid>
 					</SnackbarContext.Provider>

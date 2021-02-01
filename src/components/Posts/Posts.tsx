@@ -6,11 +6,7 @@ import { fetchPosts } from '../../data/api';
 import { ALL_POSTS } from '../../constants/apiPredicates';
 import useStyles from './styles';
 
-interface Props {
-	setCurrentId(id: string): void;
-}
-
-const Posts = ({ setCurrentId }: Props) => {
+const Posts = () => {
 	const classes = useStyles();
 	const { data, status } = useQuery(ALL_POSTS, fetchPosts, {
 		keepPreviousData: true,
@@ -43,7 +39,7 @@ const Posts = ({ setCurrentId }: Props) => {
 				spacing={3}>
 				{data.map((post) => (
 					<Grid key={post._id} item xs={12} sm={6}>
-						<Post post={post} setCurrentId={setCurrentId} />
+						<Post post={post} />
 					</Grid>
 				))}
 			</Grid>
