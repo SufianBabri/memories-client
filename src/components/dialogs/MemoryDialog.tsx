@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -14,6 +14,7 @@ import PostDto from '../../dto/postDto';
 import useCreatePost from '../../data/cacheHooks';
 import TagInputField from '../TagInputField';
 import ImagePicker from '../ImagePicker';
+import SnackbarContext from '../../context/SnackbarContext';
 
 interface IProps {
 	open: boolean;
@@ -23,20 +24,25 @@ interface IProps {
 }
 
 export default function MemoryDialog({ open, setOpen, showError }: IProps) {
-	const handleClose = () => setOpen(false);
-
+	const snackbarContext = useContext(SnackbarContext);
 	const { createPost, errorOnCreatePost } = useCreatePost();
 
-	errorOnCreatePost &&
+	const handleClose = () => setOpen(false);
+
+	useEffect(() => {
 		console.log('Error while creating post', errorOnCreatePost);
+
+		snackbarContext.setContent({ text: errorOnCreatePost, type: 'error' });
+	}, [errorOnCreatePost]);
 
 	const postSchema = z.object({
 		creator: z.string().nonempty(),
 		title: z.string().min(3),
 		message: z.string().min(10),
-		tags: z.string().array().max(3),
-		imageBase64: z.string().nonempty(),
+		tags: z.string().array().max(3, 'A maximum of 3 tags are allowed'),
+		imageBase64: z.string().nonempty('You need to upload an image!'),
 	});
+
 	const {
 		register,
 		getValues,
@@ -47,6 +53,9 @@ export default function MemoryDialog({ open, setOpen, showError }: IProps) {
 	} = useForm({
 		resolver: zodResolver(postSchema),
 	});
+	useEffect(() => {
+		console.log('errors1', errors);
+	}, [errors]);
 
 	return (
 		<Dialog

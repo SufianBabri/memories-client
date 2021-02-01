@@ -45,6 +45,7 @@ export default function ImagePicker({ name, error, control, setValue }: Props) {
 			<Controller
 				name={name}
 				control={control}
+				defaultValue=""
 				render={() => (
 					<input
 						type="file"
@@ -58,8 +59,8 @@ export default function ImagePicker({ name, error, control, setValue }: Props) {
 					/>
 				)}
 			/>
-			<Typography>(Max filesize = 2MB)</Typography>
 			{error && <Typography color="error">{error.message}</Typography>}
+			<Typography>(Max filesize = 2MB)</Typography>
 		</div>
 	);
 }
