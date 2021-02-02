@@ -9,13 +9,17 @@ import {
 } from '@material-ui/core';
 import packageJson from '../../../package.json';
 
-export interface IProps {
+export interface Props {
 	open: boolean;
 	setOpen(open: boolean): void;
 }
 
-const AboutDialog = ({ open: openAbout, setOpen: setOpenAbout }: IProps) => {
+export default function AboutDialog({
+	open: openAbout,
+	setOpen: setOpenAbout,
+}: Props) {
 	const handleCloseAbout = () => setOpenAbout(false);
+
 	return (
 		<Dialog
 			open={openAbout}
@@ -38,6 +42,4 @@ const AboutDialog = ({ open: openAbout, setOpen: setOpenAbout }: IProps) => {
 			</DialogActions>
 		</Dialog>
 	);
-};
-
-export default AboutDialog;
+}

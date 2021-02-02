@@ -1,3 +1,4 @@
+import React from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -6,15 +7,14 @@ import {
 	Button,
 	DialogActions,
 } from '@material-ui/core';
-import React from 'react';
 
-interface IProps {
+interface Props {
 	open: boolean;
 	setOpen(open: boolean): void;
 	onDismiss(): void;
 }
 
-export default function ErrorDialog({ open, setOpen, onDismiss }: IProps) {
+export default function ErrorDialog({ open, setOpen, onDismiss }: Props) {
 	return (
 		<Dialog
 			open={open}
