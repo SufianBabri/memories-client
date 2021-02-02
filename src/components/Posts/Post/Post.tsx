@@ -16,6 +16,8 @@ import PostModel from '../../../models/postModel';
 import { queryCache, useMutation } from 'react-query';
 import { ALL_POSTS } from '../../../constants/apiPredicates';
 import SnackbarContext from '../../../context/SnackbarContext';
+import useDeletePost from '../../../data/hooks/useDeletePost';
+import { useError } from '../../../hooks/useSnackbar';
 
 interface Props {
 	post: PostModel;
@@ -25,33 +27,9 @@ const Post = ({ post }: Props) => {
 	const classes = useStyles();
 	const snackbarContext = useContext(SnackbarContext);
 
-	const [deletePost] = useMutation<void, Error, PostModel, PostModel[]>(
-		(post) => api.deletePost(post._id),
-		{
-			onMutate: () => {
-				queryCache.cancelQueries(ALL_POSTS);
-				const prev =
-					queryCache.getQueryData<PostModel[]>(ALL_POSTS) ?? [];
+	const { deletePost, errorOnDelete } = useDeletePost();
+	useError(errorOnDelete);
 
-				queryCache.setQueryData<PostModel[]>(ALL_POSTS, (posts) => {
-					if (posts === undefined) return [];
-					return posts.filter((p) => p._id !== post._id);
-				});
-
-				return prev;
-			},
-			onError: () => {
-				console.error('request failed');
-				snackbarContext.setContent({
-					text: 'Delete action failed',
-					type: 'error',
-				});
-			},
-			onSettled: () => {
-				queryCache.refetchQueries(ALL_POSTS);
-			},
-		}
-	);
 	const [likePost] = useMutation<
 		PostModel,
 		Error,
