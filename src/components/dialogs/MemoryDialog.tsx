@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react';
+import React from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -12,8 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import TagInputField from '../TagInputField';
 import ImagePicker from '../ImagePicker';
-import SnackbarContext from '../../context/SnackbarContext';
 import PostDto from '../../dto/postDto';
+import { useError } from '../../hooks/useSnackbar';
 import useCreatePost from '../../data/hooks/useCreatePost';
 
 interface Props {
@@ -24,16 +24,10 @@ interface Props {
 }
 
 export default function MemoryDialog({ open, setOpen, showError }: Props) {
-	const snackbarContext = useContext(SnackbarContext);
-	const { createPost, errorOnCreatePost } = useCreatePost();
+	const { createPost, errorOnCreate } = useCreatePost();
+	useError(errorOnCreate);
 
 	const handleClose = () => setOpen(false);
-
-	useEffect(() => {
-		console.log('Error while creating post', errorOnCreatePost);
-
-		snackbarContext.setContent({ text: errorOnCreatePost, type: 'error' });
-	}, [errorOnCreatePost]);
 
 	const postSchema = z.object({
 		creator: z.string().nonempty(),

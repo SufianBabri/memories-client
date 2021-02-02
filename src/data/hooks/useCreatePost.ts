@@ -4,9 +4,11 @@ import { ALL_POSTS } from '../../constants/apiPredicates';
 import PostDto from '../../dto/postDto';
 import PostModel from '../../models/postModel';
 import * as api from '../api';
+import ApiError from './ApiError';
 
 export default function useCreatePost() {
-	const [error, setError] = useState('');
+	const [error, setError] = useState<ApiError | undefined>();
+
 	const [createPost] = useMutation<PostModel, Error, PostDto, PostModel[]>(
 		(postDto) => api.createPost(postDto),
 		{
@@ -35,18 +37,21 @@ export default function useCreatePost() {
 				return prev;
 			},
 			onError: (e) => {
-				console.error(e, 'create post failed');
-				setError('Error occurred while saving your memory...');
+				setError({
+					message: 'Error occurred while posting your memory...',
+					error: e,
+				});
 			},
 			onSettled: () => {
 				queryCache.refetchQueries(ALL_POSTS);
 			},
 		}
 	);
+
 	return {
 		createPost: async (data: PostDto) => {
 			await createPost(data);
 		},
-		errorOnCreatePost: error,
+		errorOnCreate: error,
 	};
 }
