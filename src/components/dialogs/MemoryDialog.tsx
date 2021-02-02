@@ -11,19 +11,19 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import PostDto from '../../dto/postDto';
-import useCreatePost from '../../data/cacheHooks';
+import useCreatePost from '../../data/hooks/useCreatePost';
 import TagInputField from '../TagInputField';
 import ImagePicker from '../ImagePicker';
 import SnackbarContext from '../../context/SnackbarContext';
 
-interface IProps {
+interface Props {
 	open: boolean;
 	setOpen(open: boolean): void;
 	post?: PostDto;
 	showError(msg: string): void;
 }
 
-export default function MemoryDialog({ open, setOpen, showError }: IProps) {
+export default function MemoryDialog({ open, setOpen, showError }: Props) {
 	const snackbarContext = useContext(SnackbarContext);
 	const { createPost, errorOnCreatePost } = useCreatePost();
 
@@ -53,9 +53,6 @@ export default function MemoryDialog({ open, setOpen, showError }: IProps) {
 	} = useForm({
 		resolver: zodResolver(postSchema),
 	});
-	useEffect(() => {
-		console.log('errors1', errors);
-	}, [errors]);
 
 	return (
 		<Dialog
@@ -116,8 +113,8 @@ export default function MemoryDialog({ open, setOpen, showError }: IProps) {
 					color="primary"
 					onClick={handleSubmit(
 						(data) => {
-							createPost(data);
 							setOpen(false);
+							createPost(data);
 						},
 						(e) => {
 							console.log('handleSubmit-onError', e);

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { queryCache, useMutation } from 'react-query';
-import { ALL_POSTS } from '../constants/apiPredicates';
-import PostDto from '../dto/postDto';
-import PostModel from '../models/postModel';
-import * as api from './api';
+import { ALL_POSTS } from '../../constants/apiPredicates';
+import PostDto from '../../dto/postDto';
+import PostModel from '../../models/postModel';
+import * as api from '../api';
 
 export default function useCreatePost() {
 	const [error, setError] = useState('');
@@ -44,8 +44,8 @@ export default function useCreatePost() {
 		}
 	);
 	return {
-		createPost: (data: PostDto) => {
-			createPost(data).then();
+		createPost: async (data: PostDto) => {
+			await createPost(data);
 		},
 		errorOnCreatePost: error,
 	};

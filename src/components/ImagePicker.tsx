@@ -5,12 +5,12 @@ import { Typography } from '@material-ui/core';
 
 interface Props {
 	name: string;
-	error?: FieldError | undefined;
 	control: Control<any>;
+	error?: FieldError | undefined;
 	setValue(key: string, value: string): void;
 }
 
-export default function ImagePicker({ name, error, control, setValue }: Props) {
+export default function ImagePicker({ name, control, error, setValue }: Props) {
 	const snackbarContext = useContext(SnackbarContext);
 
 	const isFileSizeAcceptable = (file: File) => {
@@ -28,7 +28,7 @@ export default function ImagePicker({ name, error, control, setValue }: Props) {
 
 		let reader = new FileReader();
 		reader.onload = function () {
-			setValue('imageBase64', reader.result?.toString() ?? '');
+			setValue(name, reader.result?.toString() ?? '');
 		};
 		reader.onerror = function (error) {
 			console.error(error);
