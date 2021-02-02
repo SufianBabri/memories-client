@@ -8,9 +8,7 @@ import { ALL_POSTS } from '../data/cache';
 
 export default function Posts() {
 	const classes = useStyles();
-	const { data, status } = useQuery(ALL_POSTS, fetchPosts, {
-		keepPreviousData: true,
-	});
+	const { data, status } = useQuery(ALL_POSTS, fetchPosts, { retry: 3 });
 
 	if (status === 'loading' || data === undefined)
 		return (
