@@ -9,21 +9,22 @@ import {
 	IconButton,
 	Grid,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import InfoIcon from '@material-ui/icons/Info';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import Posts from './components/Posts/Posts';
-import useStyles from './styles';
+import Posts from './components/Posts';
 import MySnackbar, { Props as SnackbarProps } from './components/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
 import AboutDialog from './components/dialogs/AboutDialog';
 import MemoryDialog from './components/dialogs/MemoryDialog';
 
-const App = () => {
+export default function App() {
 	const classes = useStyles();
+
 	const [snackbarProps, setSnackbarProps] = useState<
 		SnackbarProps | undefined
-	>(undefined);
+	>();
 	const [openAbout, setOpenAbout] = useState(false);
 	const [openMemoryDialog, setOpenMemoryDialog] = useState(false);
 
@@ -84,6 +85,17 @@ const App = () => {
 			)}
 		</Container>
 	);
-};
+}
 
-export default App;
+const useStyles = makeStyles((theme) => ({
+	container: {
+		padding: '0',
+	},
+	title: { flexGrow: 1 },
+	heading: {
+		color: 'rgba(0,183,255, 1)',
+	},
+	image: {
+		marginLeft: '15px',
+	},
+}));

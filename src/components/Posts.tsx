@@ -1,12 +1,12 @@
 import React from 'react';
-import Post from './Post/Post';
 import { Grid, CircularProgress, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { useQuery } from 'react-query';
-import { fetchPosts } from '../../data/api';
-import { ALL_POSTS } from '../../constants/apiPredicates';
-import useStyles from './styles';
+import Post from './Post';
+import { fetchPosts } from '../data/api';
+import { ALL_POSTS } from '../constants/apiPredicates';
 
-const Posts = () => {
+export default function Posts() {
 	const classes = useStyles();
 	const { data, status } = useQuery(ALL_POSTS, fetchPosts, {
 		keepPreviousData: true,
@@ -45,6 +45,17 @@ const Posts = () => {
 			</Grid>
 		);
 	}
-};
+}
 
-export default Posts;
+const useStyles = makeStyles((theme) => ({
+	mainContainer: {
+		display: 'flex',
+		alignItems: 'center',
+	},
+	smMargin: {
+		margin: theme.spacing(1),
+	},
+	actionDiv: {
+		textAlign: 'center',
+	},
+}));
