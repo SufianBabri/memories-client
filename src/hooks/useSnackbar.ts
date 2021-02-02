@@ -11,5 +11,5 @@ export function useError(e?: ApiError) {
 		console.log(e.message, e.error);
 
 		snackbarContext.setContent({ text: e.message, type: 'error' });
-	}, [e]);
+	}, [e, snackbarContext]);
 }

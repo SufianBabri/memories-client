@@ -4,17 +4,17 @@ import {
 	CardActions,
 	CardContent,
 	CardMedia,
-	Button,
 	Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import ThumbsUpAltIcon from '@material-ui/icons/ThumbUpAlt';
+import ThumbsUpIcon from '@material-ui/icons/ThumbUp';
 import DeleteIcon from '@material-ui/icons/Delete';
 import moment from 'moment';
 import PostModel from '../data/models/postModel';
 import useDeletePost from '../data/hooks/useDeletePost';
 import useLikePost from '../data/hooks/useLikePost';
 import { useError } from '../hooks/useSnackbar';
+import ActionButton from './ActionButton';
 
 interface Props {
 	post: PostModel;
@@ -56,23 +56,19 @@ export default function Post({ post }: Props) {
 				</Typography>
 			</CardContent>
 			<CardActions className={classes.cardActions}>
-				<Button
-					size="small"
-					color="primary"
-					onClick={() => {
-						likePost(post);
-					}}>
-					<ThumbsUpAltIcon fontSize="small" />
-					&nbsp; Like &nbsp;
-					{post.likeCount}
-				</Button>
-				<Button
-					size="small"
-					color="primary"
+				<ActionButton
+					ariaLabel="Like"
+					label={post.likeCount.toString()}
+					tooltip="Like"
+					onClick={() => likePost(post)}>
+					<ThumbsUpIcon />
+				</ActionButton>
+				<ActionButton
+					ariaLabel="Delete"
+					tooltip="Delete"
 					onClick={() => deletePost(post)}>
-					<DeleteIcon fontSize="small" />
-					&nbsp; Delete
-				</Button>
+					<DeleteIcon />
+				</ActionButton>
 			</CardActions>
 		</Card>
 	);
