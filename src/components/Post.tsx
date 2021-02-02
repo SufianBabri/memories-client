@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ThumbsUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import moment from 'moment';
-import PostModel from '../models/postModel';
+import PostModel from '../data/models/postModel';
 import useDeletePost from '../data/hooks/useDeletePost';
 import useLikePost from '../data/hooks/useLikePost';
 import { useError } from '../hooks/useSnackbar';

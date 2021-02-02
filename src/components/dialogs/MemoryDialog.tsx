@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import TagInputField from '../TagInputField';
 import ImagePicker from '../ImagePicker';
-import PostDto from '../../dto/postDto';
+import PostDto from '../../data/dto/postDto';
 import { useError } from '../../hooks/useSnackbar';
 import useCreatePost from '../../data/hooks/useCreatePost';
 

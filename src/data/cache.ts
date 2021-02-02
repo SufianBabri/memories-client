@@ -1,6 +1,7 @@
 import { queryCache } from 'react-query';
-import { ALL_POSTS } from '../constants/apiPredicates';
-import PostModel from '../models/postModel';
+import PostModel from './models/postModel';
+
+export const ALL_POSTS = 'ALL_POSTS';
 
 export function getPost(id: string | null) {
 	return queryCache

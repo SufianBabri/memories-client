@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { queryCache, useMutation } from 'react-query';
-import { ALL_POSTS } from '../../constants/apiPredicates';
-import PostDto from '../../dto/postDto';
-import PostModel from '../../models/postModel';
+import PostDto from '../dto/postDto';
+import PostModel from '../models/postModel';
 import * as api from '../api';
-import ApiError from './ApiError';
+import { ALL_POSTS } from '../cache';
+import ApiError from '../ApiError';
 
 export default function useCreatePost() {
 	const [error, setError] = useState<ApiError | undefined>();

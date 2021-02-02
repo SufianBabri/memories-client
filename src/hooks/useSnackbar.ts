@@ -1,6 +1,6 @@
 import { useEffect, useContext } from 'react';
 import SnackbarContext from '../context/SnackbarContext';
-import ApiError from '../data/hooks/ApiError';
+import ApiError from '../data/ApiError';
 
 export function useError(e?: ApiError) {
 	const snackbarContext = useContext(SnackbarContext);

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import PostDto from '../dto/postDto';
-import PostModel from '../models/postModel';
+import PostDto from './dto/postDto';
+import PostModel from './models/postModel';
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
