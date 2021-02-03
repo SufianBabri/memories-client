@@ -77,15 +77,9 @@ export default function App() {
 	);
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
 	container: {
 		padding: '0',
 	},
 	title: { flexGrow: 1 },
-	heading: {
-		color: 'rgba(0,183,255, 1)',
-	},
-	image: {
-		marginLeft: '15px',
-	},
-}));
+});

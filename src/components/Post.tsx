@@ -81,12 +81,6 @@ const useStyles = makeStyles({
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		backgroundBlendMode: 'darken',
 	},
-	border: {
-		border: 'solid',
-	},
-	fullHeightCard: {
-		height: '100%',
-	},
 	card: {
 		display: 'flex',
 		flexDirection: 'column',
@@ -100,15 +94,6 @@ const useStyles = makeStyles({
 		top: '20px',
 		left: '20px',
 		color: 'white',
-	},
-	overlay2: {
-		position: 'absolute',
-		top: '20px',
-		right: '20px',
-		color: 'white',
-	},
-	grid: {
-		display: 'flex',
 	},
 	details: {
 		display: 'flex',
