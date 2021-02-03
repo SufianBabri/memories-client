@@ -4,10 +4,8 @@ import {
 	Container,
 	AppBar,
 	Typography,
-	Grow,
 	Toolbar,
 	IconButton,
-	Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
@@ -48,27 +46,18 @@ export default function App() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				<Grow in style={{ paddingTop: 90 }}>
-					<Container>
-						<Grid
-							container
-							justify="space-between"
-							alignItems="stretch"
-							spacing={3}>
-							<Grid item xs={12} sm={7}>
-								<Posts />
-							</Grid>
-						</Grid>
-					</Container>
-				</Grow>
+
+				<Container style={{ marginTop: 90 }}>
+					<Posts />
+				</Container>
 
 				<Fab
 					color="primary"
 					aria-label="create a memory"
 					style={{
 						position: 'fixed',
-						bottom: 10,
-						right: 10,
+						bottom: 25,
+						right: 25,
 					}}
 					onClick={() => setOpenMemoryDialog(true)}>
 					<AddIcon />
