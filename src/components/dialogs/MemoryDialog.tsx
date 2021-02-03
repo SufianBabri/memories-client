@@ -62,6 +62,7 @@ export default function MemoryDialog({ open, setOpen, showError }: Props) {
 						helperText={errors.creator?.message ?? ''}
 						variant="outlined"
 						label="Creator"
+						autoFocus={true}
 						fullWidth
 						inputRef={register}
 					/>
@@ -81,7 +82,6 @@ export default function MemoryDialog({ open, setOpen, showError }: Props) {
 						helperText={errors.message?.message ?? ''}
 						multiline
 						rows={3}
-						autoFocus={true}
 						variant="outlined"
 						label="Message"
 						fullWidth
