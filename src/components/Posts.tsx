@@ -38,7 +38,7 @@ export default function Posts() {
 	} else if (data !== undefined) {
 		return (
 			<Grow in>
-				<Container style={{ backgroundColor: 'red' }}>
+				<Container>
 					<Grid
 						container
 						className={classes.mainContainer}
