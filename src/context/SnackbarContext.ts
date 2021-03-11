@@ -1,5 +1,5 @@
 import React from 'react';
-import { Props as SnackbarProps } from '../components/MySnackbar';
+import { Props as SnackbarProps } from '../components/common/MySnackbar';
 
 export type SnackbarContextType = {
 	setContent: (props?: SnackbarProps) => void;

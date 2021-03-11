@@ -11,11 +11,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import InfoIcon from '@material-ui/icons/Info';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import Posts from './components/Posts';
-import MySnackbar, { Props as SnackbarProps } from './components/MySnackbar';
+import Posts from './components/common/Posts';
+import MySnackbar, { Props as SnackbarProps } from './components/common/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
 import AboutDialog from './components/dialogs/AboutDialog';
-import MemoryDialog from './components/dialogs/MemoryDialog';
+import NewMemoryDialog from './components/dialogs/NewMemoryDialog';
 
 export default function App() {
 	const classes = useStyles();
@@ -62,7 +62,7 @@ export default function App() {
 					onClick={() => setOpenMemoryDialog(true)}>
 					<AddIcon />
 				</Fab>
-				<MemoryDialog
+				<NewMemoryDialog
 					open={openMemoryDialog}
 					setOpen={setOpenMemoryDialog}
 					showError={(msg) => setSnackbarProps({ text: msg })}

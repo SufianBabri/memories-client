@@ -10,8 +10,8 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import TagInputField from '../TagInputField';
-import ImagePicker from '../ImagePicker';
+import TagInputField from '../common/TagInputField';
+import ImagePicker from '../common/ImagePicker';
 import PostDto from '../../data/dto/postDto';
 import { useError } from '../../hooks/useSnackbar';
 import useCreatePost from '../../data/hooks/useCreatePost';
@@ -23,7 +23,7 @@ interface Props {
 	showError(msg: string): void;
 }
 
-export default function MemoryDialog({ open, setOpen, showError }: Props) {
+export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 	const [imageData, setImageData] = useState('');
 	const { createPost, errorOnCreate } = useCreatePost();
 	useError(errorOnCreate);

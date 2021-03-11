@@ -11,8 +11,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { useQuery } from 'react-query';
 import Post from './Post';
-import { fetchPosts } from '../data/api';
-import { ALL_POSTS } from '../data/cache';
+import { fetchPosts } from '../../data/api';
+import { ALL_POSTS } from '../../data/cache';
 
 export default function Posts() {
 	const classes = useStyles();

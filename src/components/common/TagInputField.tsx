@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Control, Controller, FieldError } from 'react-hook-form';
 import ChipInput from 'material-ui-chip-input';
-import SnackbarContext from '../context/SnackbarContext';
+import SnackbarContext from '../../context/SnackbarContext';
 
 interface Props {
 	name: string;

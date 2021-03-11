@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Snackbar } from '@material-ui/core';
-import SnackbarContext from '../context/SnackbarContext';
+import SnackbarContext from '../../context/SnackbarContext';
 import MuiAlert from '@material-ui/lab/Alert';
 import Slide, { SlideProps } from '@material-ui/core/Slide';
 

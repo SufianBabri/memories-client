@@ -10,10 +10,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import ThumbsUpIcon from '@material-ui/icons/ThumbUp';
 import DeleteIcon from '@material-ui/icons/Delete';
 import moment from 'moment';
-import PostModel from '../data/models/postModel';
-import useDeletePost from '../data/hooks/useDeletePost';
-import useLikePost from '../data/hooks/useLikePost';
-import { useError } from '../hooks/useSnackbar';
+import PostModel from '../../data/models/postModel';
+import useDeletePost from '../../data/hooks/useDeletePost';
+import useLikePost from '../../data/hooks/useLikePost';
+import { useError } from '../../hooks/useSnackbar';
 import ActionButton from './ActionButton';
 
 interface Props {

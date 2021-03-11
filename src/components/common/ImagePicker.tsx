@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { Control, Controller, FieldError } from 'react-hook-form';
-import SnackbarContext from '../context/SnackbarContext';
+import SnackbarContext from '../../context/SnackbarContext';
 import { Typography } from '@material-ui/core';
-import { isFileBiggerThan2MB, readImageAsBase64Data } from '../utils/fileUtils';
+import { isFileBiggerThan2MB, readImageAsBase64Data } from '../../utils/fileUtils';
 
 interface Props {
 	name: string;
