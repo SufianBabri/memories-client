@@ -1,18 +1,11 @@
-import React, { useState } from 'react';
-import {
-	Fab,
-	Container,
-	AppBar,
-	Typography,
-	Toolbar,
-	IconButton,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import React, {useState} from 'react';
+import {AppBar, Container, Fab, IconButton, Toolbar, Typography} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import InfoIcon from '@material-ui/icons/Info';
-import { ReactQueryDevtools } from 'react-query-devtools';
+import {ReactQueryDevtools} from 'react-query-devtools';
 import Posts from './components/common/Posts';
-import MySnackbar, { Props as SnackbarProps } from './components/common/MySnackbar';
+import MySnackbar, {Props as SnackbarProps} from './components/common/MySnackbar';
 import SnackbarContext from './context/SnackbarContext';
 import AboutDialog from './components/dialogs/AboutDialog';
 import NewMemoryDialog from './components/dialogs/NewMemoryDialog';
@@ -20,19 +13,17 @@ import NewMemoryDialog from './components/dialogs/NewMemoryDialog';
 export default function App() {
 	const classes = useStyles();
 
-	const [snackbarProps, setSnackbarProps] = useState<
-		SnackbarProps | undefined
-	>();
+	const [snackbarProps, setSnackbarProps] = useState<SnackbarProps | undefined>();
 	const [openAbout, setOpenAbout] = useState(false);
 	const [openMemoryDialog, setOpenMemoryDialog] = useState(false);
 
 	return (
 		<SnackbarContext.Provider
 			value={{
-				setContent: (props) => setSnackbarProps(props),
+				setContent: (props) => setSnackbarProps(props)
 			}}>
 			<Container maxWidth={false} className={classes.container}>
-				<AppBar style={{ margin: '0' }}>
+				<AppBar>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
 							Memories
@@ -47,25 +38,21 @@ export default function App() {
 					</Toolbar>
 				</AppBar>
 
-				<Container style={{ marginTop: 90 }}>
+				<Container className={classes.content}>
 					<Posts />
 				</Container>
 
 				<Fab
+					className={classes.fab}
 					color="primary"
 					aria-label="create a memory"
-					style={{
-						position: 'fixed',
-						bottom: 25,
-						right: 25,
-					}}
 					onClick={() => setOpenMemoryDialog(true)}>
 					<AddIcon />
 				</Fab>
 				<NewMemoryDialog
 					open={openMemoryDialog}
 					setOpen={setOpenMemoryDialog}
-					showError={(msg) => setSnackbarProps({ text: msg })}
+					showError={(msg) => setSnackbarProps({text: msg})}
 				/>
 				<AboutDialog open={openAbout} setOpen={setOpenAbout} />
 				<MySnackbar {...snackbarProps} />
@@ -79,7 +66,15 @@ export default function App() {
 
 const useStyles = makeStyles({
 	container: {
-		padding: '0',
+		padding: '0'
 	},
-	title: { flexGrow: 1 },
+	title: {flexGrow: 1},
+	content: {
+		marginTop: 90
+	},
+	fab: {
+		position: 'fixed',
+		bottom: 25,
+		right: 25
+	}
 });

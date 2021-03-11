@@ -1,37 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import {
-	Button,
-	Box,
-	Container,
-	Grid,
-	Grow,
-	CircularProgress,
-	Typography,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { useQuery } from 'react-query';
+import React from 'react';
+import {Button, CircularProgress, Container, Grid, Grow, Typography} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
+import {useQuery} from 'react-query';
 import Post from './Post';
-import { fetchPosts } from '../../data/api';
-import { ALL_POSTS } from '../../data/cache';
+import {fetchPosts} from '../../data/api';
+import {ALL_POSTS} from '../../data/cache';
 
 export default function Posts() {
 	const classes = useStyles();
 
-	let { data, status, refetch } = useQuery(ALL_POSTS, fetchPosts, {
+	let {data, status, refetch} = useQuery(ALL_POSTS, fetchPosts, {
 		retry: 2,
 		refetchOnMount: false,
-		refetchOnWindowFocus: false,
+		refetchOnWindowFocus: false
 	});
 
 	if (status === 'loading') {
 		return (
-			<Grid container justify="center" style={{ paddingTop: 90 }}>
-				<CircularProgress style={{ alignItems: 'center' }} />
+			<Grid container justify="center" className={classes.progressContainer}>
+				<CircularProgress className={classes.progress} />
 			</Grid>
 		);
 	} else if (status === 'success' && data?.length === 0) {
 		return (
-			<Typography variant="h5" align="center" style={{ paddingTop: 50 }}>
+			<Typography variant="h5" align="center" className={classes.emptyMessageContainer}>
 				No memories added yet!
 			</Typography>
 		);
@@ -64,15 +56,13 @@ export default function Posts() {
 			<Grid
 				container
 				justify="center"
-				style={{
-					paddingTop: 50,
-				}}>
+				className={classes.retryContainer}>
 				<Grid item xs={12}>
 					<Typography variant="h5" align="center">
 						Failed to load the posts. Please try again.
 					</Typography>
 				</Grid>
-				<Grid item style={{ paddingTop: '10px' }}>
+				<Grid item className={classes.retryButtonContainer}>
 					<Button
 						onClick={() => refetch()}
 						color="primary"
@@ -88,6 +78,21 @@ export default function Posts() {
 const useStyles = makeStyles((theme) => ({
 	mainContainer: {
 		display: 'flex',
-		alignItems: 'center',
+		alignItems: 'center'
 	},
+	progressContainer: {
+		paddingTop: 90
+	},
+	emptyMessageContainer: {
+		paddingTop: 50
+	},
+	progress: {
+		alignItems: 'center'
+	},
+	retryContainer: {
+		paddingTop: '50px'
+	},
+	retryButtonContainer: {
+		paddingTop: '10px'
+	}
 }));

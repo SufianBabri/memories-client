@@ -1,32 +1,30 @@
-import { useState } from 'react';
-import {
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	TextField,
-	Button,
-} from '@material-ui/core';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {useState} from 'react';
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from '@material-ui/core';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import TagInputField from '../common/TagInputField';
 import ImagePicker from '../common/ImagePicker';
 import PostDto from '../../data/dto/postDto';
-import { useError } from '../../hooks/useSnackbar';
+import {useError} from '../../hooks/useSnackbar';
 import useCreatePost from '../../data/hooks/useCreatePost';
+import {makeStyles} from '@material-ui/core/styles';
 
 interface Props {
 	open: boolean;
+
 	setOpen(open: boolean): void;
+
 	post?: PostDto;
+
 	showError(msg: string): void;
 }
 
-export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
+export default function NewMemoryDialog({open, setOpen, showError}: Props) {
 	const [imageData, setImageData] = useState('');
-	const { createPost, errorOnCreate } = useCreatePost();
+	const {createPost, errorOnCreate} = useCreatePost();
 	useError(errorOnCreate);
+	const classes = useStyles();
 
 	const handleClose = () => setOpen(false);
 
@@ -35,7 +33,7 @@ export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 		title: z.string().min(3),
 		message: z.string().min(10),
 		tags: z.string().array().max(3, 'A maximum of 3 tags are allowed'),
-		imageBase64: z.string().nonempty('You need to upload an image!'),
+		imageBase64: z.string().nonempty('You need to upload an image!')
 	});
 
 	const {
@@ -44,9 +42,9 @@ export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 		control,
 		handleSubmit,
 		errors,
-		setValue,
+		setValue
 	} = useForm({
-		resolver: zodResolver(postSchema),
+		resolver: zodResolver(postSchema)
 	});
 
 	function handleImageUpdate(imageData: string) {
@@ -73,6 +71,7 @@ export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 						inputRef={register}
 					/>
 					<TextField
+						className={classes.topMargin}
 						name="title"
 						error={errors.title !== undefined}
 						helperText={errors.title?.message ?? ''}
@@ -80,9 +79,9 @@ export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 						label="Title"
 						fullWidth
 						inputRef={register}
-						style={{ marginTop: '15px' }}
 					/>
 					<TextField
+						className={classes.topMargin}
 						name="message"
 						error={errors.message !== undefined}
 						helperText={errors.message?.message ?? ''}
@@ -92,7 +91,6 @@ export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 						label="Message"
 						fullWidth
 						inputRef={register}
-						style={{ marginTop: '15px' }}
 					/>
 					<TagInputField
 						name="tags"
@@ -131,3 +129,8 @@ export default function NewMemoryDialog({ open, setOpen, showError }: Props) {
 		</Dialog>
 	);
 }
+const useStyles = makeStyles((theme) => ({
+	topMargin: {
+		marginTop: '15px'
+	}
+}));
