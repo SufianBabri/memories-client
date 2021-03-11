@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -24,6 +24,7 @@ interface Props {
 }
 
 export default function MemoryDialog({ open, setOpen, showError }: Props) {
+	const [imageData, setImageData] = useState('');
 	const { createPost, errorOnCreate } = useCreatePost();
 	useError(errorOnCreate);
 
@@ -47,6 +48,11 @@ export default function MemoryDialog({ open, setOpen, showError }: Props) {
 	} = useForm({
 		resolver: zodResolver(postSchema),
 	});
+
+	function handleImageUpdate(imageData: string) {
+		setImageData(imageData);
+		setValue('imageBase64', imageData);
+	}
 
 	return (
 		<Dialog
@@ -96,9 +102,10 @@ export default function MemoryDialog({ open, setOpen, showError }: Props) {
 					/>
 					<ImagePicker
 						name="imageBase64"
+						imageData={imageData}
 						error={errors.imageBase64}
 						control={control}
-						setValue={setValue}
+						onUpdate={handleImageUpdate}
 					/>
 				</form>
 			</DialogContent>
