@@ -1,34 +1,32 @@
-import { useContext } from 'react';
-import { Control, Controller, FieldError } from 'react-hook-form';
+import {useContext} from 'react';
+import {Control, Controller, FieldError} from 'react-hook-form';
 import SnackbarContext from '../../context/SnackbarContext';
-import { Typography } from '@material-ui/core';
-import { isFileBiggerThan2MB, readImageAsBase64Data } from '../../utils/fileUtils';
+import {Typography} from '@material-ui/core';
+import {isFileBiggerThan2MB, readImageAsBase64Data} from '../../utils/fileUtils';
+import {makeStyles} from '@material-ui/core/styles';
 
 interface Props {
 	name: string;
 	imageData: string;
 	control: Control<any>;
 	error?: FieldError | undefined;
+
 	onUpdate(imageData: string): void;
 }
 
 export default function ImagePicker({
-	name,
-	imageData,
-	control,
-	error,
-	onUpdate,
-}: Props) {
+										name,
+										imageData,
+										control,
+										error,
+										onUpdate
+									}: Props) {
+	const classes = useStyles();
 	const snackbarContext = useContext(SnackbarContext);
 
 	return (
-		<div
-			style={{
-				margin: 'auto',
-				marginTop: '25px',
-				width: '90%',
-			}}>
-			{imageData && <img src={imageData} width={70} height={70} alt="" />}
+		<div className={classes.mainContainer}>
+			{imageData && <img className={classes.thumbnail} src={imageData} alt="" />}
 			<div>
 				<Controller
 					name={name}
@@ -46,7 +44,7 @@ export default function ImagePicker({
 								if (isFileBiggerThan2MB(file)) {
 									snackbarContext.setContent({
 										text: 'File size can not exceed 2MB',
-										type: 'error',
+										type: 'error'
 									});
 									return;
 								}
@@ -54,7 +52,8 @@ export default function ImagePicker({
 									.then((imageData) => {
 										onUpdate(imageData);
 									})
-									.catch((e) => {});
+									.catch((e) => {
+									});
 							}}
 						/>
 					)}
@@ -67,3 +66,15 @@ export default function ImagePicker({
 		</div>
 	);
 }
+
+const useStyles = makeStyles((theme) => ({
+	mainContainer: {
+		margin: 'auto',
+		marginTop: '25px',
+		width: '90%'
+	},
+	thumbnail: {
+		width: 70,
+		height: 70
+	}
+}));
