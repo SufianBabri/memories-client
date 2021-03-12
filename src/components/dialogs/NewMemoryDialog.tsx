@@ -26,7 +26,10 @@ export default function NewMemoryDialog({open, setOpen, showError}: Props) {
 	useError(errorOnCreate);
 	const classes = useStyles();
 
-	const handleClose = () => setOpen(false);
+	const handleClose = () => {
+		setImageData('');
+		setOpen(false);
+	};
 
 	const postSchema = z.object({
 		creator: z.string().nonempty(),
@@ -49,7 +52,7 @@ export default function NewMemoryDialog({open, setOpen, showError}: Props) {
 
 	function handleImageUpdate(imageData: string) {
 		setImageData(imageData);
-		setValue('imageBase64', imageData);
+		setValue('imageBase64', imageData, {shouldValidate: true});
 	}
 
 	return (
